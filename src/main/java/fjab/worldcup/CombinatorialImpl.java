@@ -2,6 +2,7 @@ package fjab.worldcup;
 
 import java.util.HashSet;
 import java.util.stream.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -10,9 +11,34 @@ import org.paukov.combinatorics.Generator;
 import org.paukov.combinatorics.ICombinatoricsVector;
 
 
+/*
+ * Since each team play 3 games, the potential combinations of results for a team are:
+ * WIN-WIN-WIN, WIN-WIN-DRAW, WIN-WIN-LOSS, WIN-DRAW-DRAW, etc.
+ * More precisely, these are combinations with repetition of 3 elements taken in groups of 3 so in total 
+ * there are 10 different combinations.
+ * 
+ * As the order of the elements of a combination does not matter, it is convenient to represent all the possible
+ * permutations of the elements of a combination with a "normal form", namely, the values sorted in ascending order.
+ * To do so, we can represent the results WIN,DRAW and LOSS with numeric values: 1,0 and -1, respectively. Therefore,
+ * given the combination {0,-1,0}, the normalised version is {-1,0,0} 
+ * 
+ * 
+ * The 10 normalised forms listed in this constant are sorted in ascending order so this order can be used as a reference
+ * to normalise the combinations of results of the different teams in a group. For instance, given a group of 4 teams,
+ * a possible combination of results is: {{1,1,1,},{-1,0,0},{-1,0,1},{-1,-1,0}}. The combination may be normalised using
+ * the order set in this constant to obtain: {{-1,-1,0},{-1,0,0},{-1,0,1},{1,1,1}}
+ * 
+ * Note: the combinations listed in this constant are individual combinations in the sense that all of them are potential
+ * combinations of results for an individual team without taking into consideration the results obtained by other teams.
+ * However, when a team is not free but part of a group, its results depend on the results of the other teams. For
+ * instance, a combination such as {{1,1,1},{1,1,1},{1,1,1},{1,1,1}} would not be possible since no all teams can
+ * win. On the contrary, a value 1 for a team must induce a value -1 for another and a value 0 for a team must induce
+ * a value 0 for another. As a consequence, such combinations cannot be reduced to a normal form.
+*/
+
 /**
  * This implementation is based on the use of combinatorial methods.
- * As stated in ProblemConstraints.java, no all the individual combinations are possible when a team is added to
+ * No all the individual combinations are possible when a team is added to
  * a group as these combinations must be in agreement with other teams' combinations.
  * 
  * 
@@ -26,54 +52,59 @@ import org.paukov.combinatorics.ICombinatoricsVector;
  */
 public class CombinatorialImpl implements Group {
 	
+	/**
+	 * Array representing the results of a game, namely: loss (-1), draw (0) and win (1)
+	 */
+	private static final Integer[] GAME_RESULTS = {-1,0,1};
 	
 	@Override
 	public Set<GroupResult> calculateGroupResults(int numTeamsPerGroup) {
+						
+		//If numTeamsPerGroup=4 then the number of combinations of the results of a team is 10:
+		//{-1,-1,-1},{-1,-1,0},{-1,-1,1},...
+		final int[][] individualResultCombinations = getIndividualResultCombinations(numTeamsPerGroup);		
 		
-		Set<GroupResult> groupResults = new HashSet<>();
-		final int[][] individualTeamCombinations = ProblemConstraints.INDIVIDUAL_TEAM_COMBINATIONS;
+		//The number of combinations in a group when considering all the possible individual combinations of results
+		//is a combination with repetition of individualResultCombinations elements taken in groups of numTeamsPerGroup.
+		//For instance, when numTeamsPerGroup=4 then individualResultCombinations=10 and the number of all the possible
+		//combinations is 715
+		//All the invalid combinations must be taken away from the total number of possible combinations.
+		Set<GroupResult> groupResultCombinations = new HashSet<>();
 		
-		//The number of potential fee combinations is a combination with repetition of 10 elements taken in groups of 4 
-		//(715 possible combinations) 
-		//CombinationGenerator<int[]> generator = new CombinationGenerator<int[]>(individualTeamCombinations, numTeamsPerGroup);
-		ICombinatoricsVector<int[]> originalVector = Factory.createVector(individualTeamCombinations);
+		ICombinatoricsVector<int[]> originalVector = Factory.createVector(individualResultCombinations);
 		Generator<int[]> generator = Factory.createMultiCombinationGenerator(originalVector, numTeamsPerGroup);
-		assert generator.getNumberOfGeneratedObjects()==715;
+		
+		
 		for(ICombinatoricsVector<int[]> comb : generator){
 			List<int[]> combinationList = comb.getVector();
-			int[][] combination = new int[combinationList.size()][combinationList.get(0).length];
+			int[][] groupResultCombination = new int[numTeamsPerGroup][numTeamsPerGroup-1];
+			
 			for(int j=0; j<combinationList.size(); j++){
-				for(int k=0; k<combinationList.get(j).length; k++){
-					combination[j][k] = combinationList.get(j)[k];
-				}
+				groupResultCombination[j] = IntStream.of(combinationList.get(j)).toArray();
 			}
-			////////////////////
-			//Integer[][] combination = (Integer[][]) combinationList.stream().map(result -> IntStream.of(result).mapToObj(Integer::valueOf)).toArray();			
 			
-			
-			///////////////////////
-			boolean isAllowedCombination = normaliseCombination(combination);
-			if(isAllowedCombination){				
-				groupResults.add(new GroupResult(combination));
+			if(isValidCombination(groupResultCombination)){				
+				groupResultCombinations.add(new GroupResult(groupResultCombination,individualResultCombinations));
 			}
 		}
 		
-		return groupResults;
+		//generator.generateAllObjects().stream()
+		//							   .map(x -> x.getVector());
+		
+		return groupResultCombinations;
 	}
 	
 	
+	
 	/**
-	 * Normalises the combination of results obtained by different teams in a group by reducing it to a normal form. 
-	 * If the given combination is a normal form itself, it remains the same.
-	 * According to the discussion on ProblemConstraints.FREE_COMBINATIONS:
-	 * 1.a normal form has its elements sorted in ascending order
-	 * 2.there are combinations that are not allowed and cannot be reduced to a normal form 
-	 * 
-	 * @param combination Mutable object representing the combination of results obtained by different teams in a group. 
-	 * At the end of the process, this object must contain a normal form.
-	 * @return boolean True if it is possible to reduce the given combination to a normal form. Otherwise, false.
+	 * Checks if the combination of results in a group passed as an argument is a valid combination. It is a valid combination if for
+	 * every win (1) found in a team there is a loss (-1) in another and viceversa. Likewise, for every draw (0) in a team
+	 * there must be a draw (0) in another.
+	 * @param combination 2-dimensional array representing the results in a group
+	 * @return boolean True if the given combination is valid. Otherwise, false.
 	 */
-	boolean normaliseCombination(int[][] combination){
+	private boolean isValidCombination(int[][] combination) {
+		
 		
 		//Checking preconditions
 		for(int i=0; i<combination.length; i++){
@@ -85,38 +116,8 @@ public class CombinatorialImpl implements Group {
 		assert combination.length-1==combination[0].length : "number of results must be equal to number of teams minus 1";
 		
 		
-		//Checking if the given combination is allowed
-		boolean isAllowedCombination = checkAllowedCombination(combination);
-		
-		if(isAllowedCombination){		
-			//normalising results for each team by sorted them in ascending order according to the convention 
-			//established by ProblemConstraints.freeCombinations
-			/*for(int j=0; j<combination.length; j++){
-				Arrays.sort(combination[j]);
-			}*/
-			
-			//normalising the order of the teams in ascending order according to the position of their result combinations
-			//in ProblemConstraints.freeCombinations				
-//			Arrays.sort(combination, (o1,o2) ->  findIndex(o1)-findIndex(o2));
-			
-			return true;
-		}
-		else{
-			return false;
-		}
-	}
-
-	/**
-	 * Checks if the combination of results passed as an argument is a valid combination. It is a valid combination if for
-	 * every win (1) found in a team there is a loss (-1) in another and viceversa. Likewise, for every draw (0) in a team
-	 * there must be a draw (0) in another.
-	 * @param combination
-	 * @return
-	 */
-	private boolean checkAllowedCombination(int[][] combination) {
-		
-		//Counter of linked results for each team
-		//When found, linked results are always placed at the beginning of the corresponding array of results
+		//Counter of linked results for each team used for convenience in order to ensure that a linked result only 
+		//can be part of one pair
 		int[] counter = new int[combination.length];
 		for(int j=0; j<combination.length; j++){
 			counter[j] = 0;
@@ -139,10 +140,14 @@ public class CombinatorialImpl implements Group {
 					for(int m=counter[k]; m<combination[k].length; m++){
 						
 						if(combination[k][m]==-combination[i][j]){
-							counter[k]++;							
+							counter[k]++;
+							//A linked result only can be part of one pair. By moving it to the top, it is ensured that
+							//is not considered for any other pair
 							putLinkedResultAtTheBeginning(combination[k],m);
 							
 							if(k<numTeamsToSearchForLinkedElement){
+								//Two teams cannot have more than one pair of linked results. By moving the selected team to the end,
+								//it is ensured that said team is not considered for any other pair with the i-th team
 								putTeamAtTheEnd(combination,counter,k);
 							}
 							numTeamsToSearchForLinkedElement--;
@@ -153,51 +158,15 @@ public class CombinatorialImpl implements Group {
 					}					
 				}
 				
-				if(!linkedResultFound) return false;
-				
-				/*if(!linkedResultFound){
-			
-					//This point is reached if no linked result has been found among other team's results
-					//In this case, we must change the first non-linked result that we find to get a linked result
-					linkedResult:for(int k=i+1; k<=numTeamsToSearchForLinkedElement; k++){
-						
-						//Looping over results of k-th team to find linked result
-						for(int m=counter[k]; m<combination[k].length; m++){
-							
-							combination[k][m]=-combination[i][j];
-							
-							counter[k]++;							
-							putLinkedResultAtTheBeginning(combination[k],m);
-							
-							if(k<numTeamsToSearchForLinkedElement){
-								putTeamAtTheEnd(combination,counter,k);
-							}
-							
-							numTeamsToSearchForLinkedElement--;
-							
-							break linkedResult;						
-						}					
-					}				
-				}*/
+				//As soon as a result in one team fails to find its pair in another team, we can conclude that the combination
+				//is not valid
+				if(!linkedResultFound) return false;								
 			}
 		}
 		return true;
 	}
 
-	private int findIndex(int[] array) {
-		
-		for(int k=0; k<ProblemConstraints.INDIVIDUAL_TEAM_COMBINATIONS.length; k++){
-			boolean equals = true;
-			for(int m=0; m<ProblemConstraints.NUMBER_OF_GAMES_PER_TEAM; m++){
-				equals = array[m] == ProblemConstraints.INDIVIDUAL_TEAM_COMBINATIONS[k][m];
-				if(!equals) break;					
-			}
-			if(equals) return k;
-		}
-		
-		assert false : "this point should never be reached";
-		return -1;
-	}
+	
 
 	private void putTeamAtTheEnd(int[][] combination, int[] counter, int k) {
 
@@ -221,6 +190,20 @@ public class CombinatorialImpl implements Group {
 			array[j] = array[j-1];
 		}
 		array[0] = linkedElement;		
+	}
+	
+	private int[][] getIndividualResultCombinations(int numTeamsPerGroup){
+					
+		ICombinatoricsVector<Integer> originalVector = Factory.createVector(GAME_RESULTS);
+		Generator<Integer> generator = Factory.createMultiCombinationGenerator(originalVector, numTeamsPerGroup-1);
+		
+		int[][] resultCombinations = new int[(int) generator.getNumberOfGeneratedObjects()][numTeamsPerGroup-1];		
+		int combinationNumber = 0;
+		for(ICombinatoricsVector<Integer> comb : generator){
+			resultCombinations[combinationNumber++] = comb.getVector().stream().mapToInt(Integer::intValue).toArray();
+		}
+		
+		return resultCombinations;
 	}
 
 }

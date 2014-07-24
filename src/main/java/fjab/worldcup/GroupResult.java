@@ -12,8 +12,8 @@ public final class GroupResult {
 	private final int[][] results;
 	//private final int[] points;
 	
-	public GroupResult(int[][] result){
-		this.results = result; 
+	public GroupResult(int[][] groupResult, int[][] teamResults){
+		this.results = groupResult; 
 		
 		//normalising results for each team by sorted them in ascending order according to the convention 
 		//established by ProblemConstraints.INDIVIDUAL_TEAM_COMBINATIONS
@@ -23,7 +23,7 @@ public final class GroupResult {
 		
 		//normalising the order of the teams in ascending order according to the position of their result combinations
 		//in ProblemConstraints.INDIVIDUAL_TEAM_COMBINATIONS				
-		Arrays.sort(results, (o1,o2) ->  indexOfElement(o1,ProblemConstraints.INDIVIDUAL_TEAM_COMBINATIONS)-indexOfElement(o2,ProblemConstraints.INDIVIDUAL_TEAM_COMBINATIONS));
+		Arrays.sort(results, (o1,o2) ->  indexOfElement(o1,teamResults)-indexOfElement(o2,teamResults));
 	}
 
 	@Override

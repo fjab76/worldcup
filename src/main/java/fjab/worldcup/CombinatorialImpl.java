@@ -1,8 +1,6 @@
 package fjab.worldcup;
 
-import java.util.HashSet;
 import java.util.stream.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -58,10 +56,10 @@ public class CombinatorialImpl implements Group {
 	private static final Integer[] GAME_RESULTS = {-1,0,1};
 	
 	@Override
-	public Set<GroupResult> calculateGroupResults(int numTeamsPerGroup) {
+	public Set<GroupResult> calculateGroupResults(final int numTeamsPerGroup) {
 						
 		//If numTeamsPerGroup=4 then the number of combinations of the results of a team is 10:
-		//{-1,-1,-1},{-1,-1,0},{-1,-1,1},...
+		//{-1,-1,-1},{-1,-1,0},{-1,-1,1} and so on
 		final int[][] individualResultCombinations = getIndividualResultCombinations(numTeamsPerGroup);		
 		
 		//The number of combinations in a group when considering all the possible individual combinations of results
@@ -69,27 +67,17 @@ public class CombinatorialImpl implements Group {
 		//For instance, when numTeamsPerGroup=4 then individualResultCombinations=10 and the number of all the possible
 		//combinations is 715
 		//All the invalid combinations must be taken away from the total number of possible combinations.
-		Set<GroupResult> groupResultCombinations = new HashSet<>();
 		
 		ICombinatoricsVector<int[]> originalVector = Factory.createVector(individualResultCombinations);
 		Generator<int[]> generator = Factory.createMultiCombinationGenerator(originalVector, numTeamsPerGroup);
 		
+		Set<GroupResult> groupResultCombinations = generator.generateAllObjects().stream()
+		  .map(ICombinatoricsVector::getVector)
+		  .map(x -> convertToArray(x,numTeamsPerGroup))
+		  .filter(this::isValidCombination)		  
+		  .map(x -> new GroupResult(x,individualResultCombinations))
+		  .collect(Collectors.toSet());
 		
-		for(ICombinatoricsVector<int[]> comb : generator){
-			List<int[]> combinationList = comb.getVector();
-			int[][] groupResultCombination = new int[numTeamsPerGroup][numTeamsPerGroup-1];
-			
-			for(int j=0; j<combinationList.size(); j++){
-				groupResultCombination[j] = IntStream.of(combinationList.get(j)).toArray();
-			}
-			
-			if(isValidCombination(groupResultCombination)){				
-				groupResultCombinations.add(new GroupResult(groupResultCombination,individualResultCombinations));
-			}
-		}
-		
-		//generator.generateAllObjects().stream()
-		//							   .map(x -> x.getVector());
 		
 		return groupResultCombinations;
 	}
@@ -104,7 +92,6 @@ public class CombinatorialImpl implements Group {
 	 * @return boolean True if the given combination is valid. Otherwise, false.
 	 */
 	private boolean isValidCombination(int[][] combination) {
-		
 		
 		//Checking preconditions
 		for(int i=0; i<combination.length; i++){
@@ -126,6 +113,7 @@ public class CombinatorialImpl implements Group {
 		//Looping over teams
 		for(int i=0; i<combination.length-1; i++){
 			
+			//Counter of teams available to look for pairs (Two teams cannot have more than one pair of linked results)
 			int numTeamsToSearchForLinkedElement = combination.length-1;
 			
 			//Looping over results of i-th team
@@ -133,7 +121,7 @@ public class CombinatorialImpl implements Group {
 				
 				boolean linkedResultFound = false;
 				
-				//Looping over remaining teams to search linked results				
+				//Looping over remaining teams to search linked results			
 				linkedResult:for(int k=i+1; k<=numTeamsToSearchForLinkedElement; k++){										
 					
 					//Looping over results of k-th team to find linked result
@@ -204,6 +192,17 @@ public class CombinatorialImpl implements Group {
 		}
 		
 		return resultCombinations;
+	}
+	
+	private int[][] convertToArray(List<int[]> list, int numTeamsPerGroup){
+		
+		int[][] combination = new int[numTeamsPerGroup][numTeamsPerGroup-1];
+		
+		for(int j=0; j<list.size(); j++){
+			combination[j] = IntStream.of(list.get(j)).toArray();
+		}
+		
+		return combination;
 	}
 
 }

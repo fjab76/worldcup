@@ -69,22 +69,7 @@ public final class GroupResult {
 	public String toString() {
 		return Stream.of(results)
 			  .map(result -> IntStream.of(result).mapToObj(Integer::valueOf).map(s -> s.toString()).collect(Collectors.joining(",","{","}")))
-			  .collect(Collectors.joining(","));
-				
-		/*StringBuilder builder = new StringBuilder();
-		builder.append("GroupResult [results=");
-		for(int j=0; j<results.length; j++){
-			builder.append("{");
-			for(int k=0; k<results[j].length; k++){
-				builder.append(results[j][k]);
-				if(k<results[j].length-1) builder.append(",");
-			}
-			builder.append("}");
-			if(j<results.length-1) builder.append(",");
-		}
-
-		builder.append("]");
-		return builder.toString();*/
+			  .collect(Collectors.joining(","));					
 	}
 	
 	

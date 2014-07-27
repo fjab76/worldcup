@@ -5,24 +5,43 @@ import java.util.stream.Collectors;
 import java.util.stream.*;
 
 /**
- * Immutable object representing the results in a group
+ * Immutable object representing the results in a group.
+ * Two group results are similar if they only differ in the order of the team results and in the order of the results for a
+ * given team. To simplify the implementation of equals method, when a new object is created, the results are normalised
+ * by sorting the results for each team in ascending order and sorting the teams in ascending order according to the position
+ * of their results in the array teamResults.
  */
 public final class GroupResult {
 	
 	private final int[][] results;
 	//private final int[] points;
 	
+	/**
+	 * 
+	 * @param groupResult Array of integers representing the group results
+	 * @param teamResults Array of integers containing all the possible results for an individual team. It is passed into the
+	 * constructor to serve as a reference to normalise the order of the elements in groupResult.
+	 */
 	public GroupResult(int[][] groupResult, int[][] teamResults){
-		this.results = groupResult; 
 		
-		//normalising results for each team by sorted them in ascending order according to the convention 
-		//established by ProblemConstraints.INDIVIDUAL_TEAM_COMBINATIONS
+		//The elements of groupResult are stored in a new int[][] (to avoid that the program that creates the object keeps any
+		//reference to the internal representation of this object)
+		results = new int[groupResult.length][];
+		
+		for(int j=0; j<groupResult.length; j++){
+			results[j] = new int[groupResult[j].length];
+			for(int k=0; k<groupResult[j].length; k++){
+				results[j][k] = groupResult[j][k]; 
+			}
+		}
+		
+		//normalising results for each team by sorting them in ascending order
 		for(int j=0; j<results.length; j++){
 			Arrays.sort(results[j]);
 		}
 		
 		//normalising the order of the teams in ascending order according to the position of their result combinations
-		//in ProblemConstraints.INDIVIDUAL_TEAM_COMBINATIONS				
+		//in teamResults				
 		Arrays.sort(results, (o1,o2) ->  indexOfElement(o1,teamResults)-indexOfElement(o2,teamResults));
 	}
 

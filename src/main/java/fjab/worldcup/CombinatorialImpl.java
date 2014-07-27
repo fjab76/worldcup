@@ -1,6 +1,7 @@
 package fjab.worldcup;
 
 import java.util.stream.*;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -105,10 +106,7 @@ public class CombinatorialImpl implements Group {
 		
 		//Counter of linked results for each team used for convenience in order to ensure that a linked result only 
 		//can be part of one pair
-		int[] counter = new int[combination.length];
-		for(int j=0; j<combination.length; j++){
-			counter[j] = 0;
-		}
+		int[] counter = new int[combination.length];		
 		
 		//Looping over teams
 		for(int i=0; i<combination.length-1; i++){
@@ -120,35 +118,63 @@ public class CombinatorialImpl implements Group {
 			for(int j=counter[i]; j<combination[i].length; j++){
 				
 				boolean linkedResultFound = false;
+				final int searchedValue = -combination[i][j];
+				//Looping over remaining teams to count number of occurrences of possible partners in each team 
+				int[] numberOfOccurrences = new int[combination.length];
+				for(int k=i+1; k<=numTeamsToSearchForLinkedElement; k++){
+					numberOfOccurrences[k] = (int) Arrays.stream(Arrays.copyOfRange(combination[k],counter[k],combination[k].length))
+												   .filter(y -> y==searchedValue)
+												   .count();
+				}
 				
+				
+				
+				/*final int lowerLimit = counter[i];
+				final int upperLimit = combination[i].length;
+				int[] numberOfOccurrences = Arrays.stream(Arrays.copyOfRange(combination, i+1, numTeamsToSearchForLinkedElement))
+						                    	  .mapToInt(x -> (int)Arrays.stream(Arrays.copyOfRange(x, lowerLimit, upperLimit))
+							                    				            .filter(y -> y==searchedValue)
+							                    				            .count())
+							                    				            .toArray();*/
+				int max = Arrays.stream(numberOfOccurrences).max().orElse(0);
+				
+				//As soon as a result in one team fails to find its partner in another team, we can conclude that the combination
+				//is not valid
+				if(max==0) return false;
+								
+				int partnerTeam = IntStream.range(0, numberOfOccurrences.length)
+						                   .filter(x -> numberOfOccurrences[x]==max)
+						                   .findFirst().getAsInt();
+								
 				//Looping over remaining teams to search linked results			
-				linkedResult:for(int k=i+1; k<=numTeamsToSearchForLinkedElement; k++){										
+				//linkedResult:for(int k=i+1; k<=numTeamsToSearchForLinkedElement; k++){										
 					
-					//Looping over results of k-th team to find linked result
-					for(int m=counter[k]; m<combination[k].length; m++){
+					//Looping over results of k-th team to find all possible linked results
+					for(int m=counter[partnerTeam]; m<combination[partnerTeam].length; m++){											
 						
-						if(combination[k][m]==-combination[i][j]){
-							counter[k]++;
+						if(combination[partnerTeam][m]==-combination[i][j]){
+							counter[partnerTeam]++;
 							//A linked result only can be part of one pair. By moving it to the top, it is ensured that
 							//is not considered for any other pair
-							putLinkedResultAtTheBeginning(combination[k],m);
+							putLinkedResultAtTheBeginning(combination[partnerTeam],m);
 							
-							if(k<numTeamsToSearchForLinkedElement){
+							if(partnerTeam<numTeamsToSearchForLinkedElement){
 								//Two teams cannot have more than one pair of linked results. By moving the selected team to the end,
 								//it is ensured that said team is not considered for any other pair with the i-th team
-								putTeamAtTheEnd(combination,counter,k);
+								putTeamAtTheEnd(combination,counter,partnerTeam);
 							}
 							numTeamsToSearchForLinkedElement--;
 							
-							linkedResultFound = true;
-							break linkedResult;
+							//linkedResultFound = true;
+							//break linkedResult;
+							break;
 						}
 					}					
-				}
+				//}
 				
 				//As soon as a result in one team fails to find its pair in another team, we can conclude that the combination
 				//is not valid
-				if(!linkedResultFound) return false;								
+				//if(!linkedResultFound) return false;								
 			}
 		}
 		return true;

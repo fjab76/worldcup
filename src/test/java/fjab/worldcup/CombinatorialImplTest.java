@@ -36,7 +36,7 @@ public class CombinatorialImplTest {
 	}
 	
 	@Test
-	public void numberCombinationsIs28(){
+	public void numberCombinationsIs36(){
 		
 		//given
 		int numTeamsPerGroup = 4;
@@ -45,7 +45,7 @@ public class CombinatorialImplTest {
 		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);
 		
 		//then
-		Assert.assertEquals(28,setCombinations.size());
+		Assert.assertEquals(36,setCombinations.size());
 		
 	}
 	
@@ -139,6 +139,24 @@ public class CombinatorialImplTest {
 		
 		//then
 		GroupResult gr = new GroupResult(new int[][] {{0,0,1},{-1,0,0},{0,0,0},{0,0,0}},INDIVIDUAL_TEAM_COMBINATIONS);
+		Assert.assertTrue(setCombinations.contains(gr));
+		
+	}
+	
+	/**
+	 * {-1,-1,0},{-1,0,1},{0,0,0},{0,1,1} is valid
+	 */
+	@Test
+	public void combination5IsValidResult(){
+		
+		//given
+		int numTeamsPerGroup = 4;
+		
+		//when
+		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);		
+		
+		//then
+		GroupResult gr = new GroupResult(new int[][] {{-1,-1,0},{-1,0,1},{0,0,0},{0,1,1}},INDIVIDUAL_TEAM_COMBINATIONS);
 		Assert.assertTrue(setCombinations.contains(gr));
 		
 	}

@@ -30,7 +30,12 @@ import org.paukov.combinatorics.ICombinatoricsVector;
  * 1.obtain all the possible combinations of results within a group by combining all the possible combinations of 
  * an individual team (10) in groups of 4 (number of teams per group). From a mathematical point of view, these are
  * combinations with repetition of 10 elements taken in groups of 4 (=715)
- * 2.discard those combinations that are not allowed
+ * 2.filter combinations to get those that overall have an even number of 0s and the number of 1s equals
+ * the number of -1s. This is a necessary condition for a combination to be valid 
+ * 3.check each combination to see if the distribution of results among teams is valid. Since the
+ * success of the algorithm to check the distribution of results depends on the order in which
+ * the results of each team are given, the algorithm is applied as many times as the number of 
+ * teams (each time the order of the teams is rotated to have a different team at the beginning)
  *
  */
 public class CombinatorialImpl implements Group {
@@ -56,10 +61,21 @@ public class CombinatorialImpl implements Group {
 		ICombinatoricsVector<int[]> originalVector = Factory.createVector(individualResultCombinations);
 		Generator<int[]> generator = Factory.createMultiCombinationGenerator(originalVector, numTeamsPerGroup);
 		
+		Set<GroupResult> groupResultCombinationsFiltered = generator.generateAllObjects().stream()
+				  .map(ICombinatoricsVector::getVector)
+				  .map(x -> convertToArray(x,numTeamsPerGroup))
+				  .filter(this::filter2)
+				  .filter(x -> this.isValidCombination(x,numTeamsPerGroup))
+				  .map(x -> new GroupResult(x,individualResultCombinations))
+				  .collect(Collectors.toSet());
+		
+		if(true) return groupResultCombinationsFiltered;
+
+		
 		Set<GroupResult> groupResultCombinations = generator.generateAllObjects().stream()
 		  .map(ICombinatoricsVector::getVector)
 		  .map(x -> convertToArray(x,numTeamsPerGroup))
-		  .filter(this::isValidCombination)		  
+		  .filter(x -> this.isValidCombination(x,numTeamsPerGroup))	  
 		  .map(x -> new GroupResult(x,individualResultCombinations))
 		  .collect(Collectors.toSet());
 		
@@ -67,7 +83,54 @@ public class CombinatorialImpl implements Group {
 		return groupResultCombinations;
 	}
 	
+	private boolean filter1(int[][] combination){
+		
+		int[][] temp = new int[combination.length][];
+		for(int j=0; j<combination.length; j++){
+			temp[j] = Arrays.copyOf(combination[j], combination[j].length);
+		}
+		
+		int nullValue = 2;
+		for(int j=0; j<temp.length-1; j++){
+			for(int result=-1; result<=1; result++){
+				final int r = result;
+				int count = (int) IntStream.of(temp[j]).filter(x -> x==r).count();
+				if(count>0){
+					int counter = 0;
+					for(int k=j+1; k<temp.length; k++){
+						for(int m=0; m<temp[k].length; m++){
+							if(result==-temp[k][m]){
+								counter++;
+								temp[k][m] = nullValue;
+								break;
+							}
+						}
+						if(counter==count) break;
+					}
+					if(counter!=count) return false;
+				}
+			}
+		}
+		return true;
+	}
 	
+	private boolean filter2(int[][] combination){
+		
+		int counter1s=0, counter0s=0, counter_1s=0;
+		for(int j=0; j<combination.length; j++){
+			for(int k=0; k<combination[j].length; k++){
+				if(combination[j][k]==1) counter1s++; 
+				else if(combination[j][k]==0) counter0s++; 
+				else if(combination[j][k]==-1) counter_1s++;
+			}
+		}
+		return (counter0s/2*2==counter0s && counter1s==counter_1s);
+		
+	}
+	
+	private boolean isValidCombination(int[][] combination, int numTeamsPerGroup){
+		return isValidCombination(combination, numTeamsPerGroup, 1);
+	}
 	
 	/**
 	 * Checks if the combination of results in a group passed as an argument is a valid combination. It is a valid combination if for
@@ -76,11 +139,17 @@ public class CombinatorialImpl implements Group {
 	 * @param combination 2-dimensional array representing the results in a group
 	 * @return boolean True if the given combination is valid. Otherwise, false.
 	 */
-	private boolean isValidCombination(int[][] combination) {
+	private boolean isValidCombination(int[][] originalCombination, int numTeamsPerGroup, int round) {				
 		
-		//Checking preconditionss		
+		//Copying original array into other object
+		int[][] combination = new int[originalCombination.length][];
+		for(int j=0; j<combination.length; j++){
+			combination[j] = Arrays.copyOf(originalCombination[j], originalCombination[j].length);
+		}
+		
+		//Checking preconditions		
 		assert (int) Stream.of(combination).flatMapToInt(x -> IntStream.of(x)).filter(x -> (x!=0 && x!=1 && x!=-1)).count()==0 : "values of the array must be -1,0 or 1";
-		assert Stream.of(combination).filter(x -> x.length!=combination.length-1).count()==0 : "number of team results must be equal to number of teams minus 1";
+		assert Stream.of(combination).filter(x -> x.length!=combination.length-1).count()==0 : "number of team results must be equal to number of teams minus 1";	
 		
 		
 		//Counter of linked results for each team used for convenience in order to ensure that a linked result only 
@@ -109,7 +178,14 @@ public class CombinatorialImpl implements Group {
 				
 				//As soon as a result in one team fails to find its partner in another team, we can conclude that the combination
 				//is not valid
-				if(max==0) return false;
+				if(max==0){
+					if(round<=numTeamsPerGroup){
+						putTeamAtTheEnd(originalCombination, 0);
+						return isValidCombination(originalCombination, numTeamsPerGroup, ++round);
+					}
+					else
+						return false;
+				}
 								
 				int partnerTeam = IntStream.range(0, numberOfOccurrences.length)
 						                   .filter(x -> numberOfOccurrences[x]==max)
@@ -152,6 +228,17 @@ public class CombinatorialImpl implements Group {
 			int jplus1_2 = counter[j+1];
 			counter[j+1] = counter[j];
 			counter[j] = jplus1_2;
+		}
+		
+	}
+	
+	private void putTeamAtTheEnd(int[][] combination, int k) {
+
+		for(int j=k; j<combination.length-1; j++){
+			//swapping j and j+1 values
+			int[] jplus1 = combination[j+1];
+			combination[j+1] = combination[j];
+			combination[j] = jplus1;
 		}
 		
 	}

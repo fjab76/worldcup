@@ -66,7 +66,7 @@ public class CombinatorialImplTest {
 		//when
 		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);
 		for(GroupResult combination : setCombinations){
-			System.out.println(combination);
+			//System.out.println(combination);
 		}
 		
 		//then
@@ -87,7 +87,7 @@ public class CombinatorialImplTest {
 		//when
 		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);
 		for(GroupResult combination : setCombinations){
-			System.out.println(combination);
+			//System.out.println(combination);
 		}
 		
 		//then
@@ -108,7 +108,7 @@ public class CombinatorialImplTest {
 		//when
 		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);
 		for(GroupResult combination : setCombinations){
-			System.out.println(combination);
+			//System.out.println(combination);
 		}
 		
 		//then
@@ -129,7 +129,7 @@ public class CombinatorialImplTest {
 		//when
 		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);
 		for(GroupResult combination : setCombinations){
-			System.out.println(combination);
+			//System.out.println(combination);
 		}
 		
 		//then
@@ -150,7 +150,7 @@ public class CombinatorialImplTest {
 		//when
 		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);
 		for(GroupResult combination : setCombinations){
-			System.out.println(combination);
+			//System.out.println(combination);
 		}
 		
 		//then
@@ -171,7 +171,7 @@ public class CombinatorialImplTest {
 		//when
 		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);
 		for(GroupResult combination : setCombinations){
-			System.out.println(combination);
+			//System.out.println(combination);
 		}
 		
 		//then
@@ -320,7 +320,7 @@ public class CombinatorialImplTest {
 	}
 	
 	@Test
-	public void numberCombinationsIs36(){
+	public void numberCombinationsIs40(){
 		
 		//given
 		int numTeamsPerGroup = 4;
@@ -329,7 +329,7 @@ public class CombinatorialImplTest {
 		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);
 		
 		//then
-		Assert.assertEquals(36,setCombinations.size());
+		Assert.assertEquals(40,setCombinations.size());
 		
 	}
 	
@@ -337,6 +337,150 @@ public class CombinatorialImplTest {
 	@Before
 	public void setup(){
 		impl = new CombinatorialImpl();
+	}
+	
+	/**
+	 * {-1,-1,-1},{-1,-1,1},{0,1,1},{0,1,1} is valid
+	 */
+	@Test
+	public void combinationGroupAIsValidResult(){
+		
+		//given
+		int numTeamsPerGroup = 4;
+		
+		//when
+		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);		
+		
+		//then
+		GroupResult gr = new GroupResult(new int[][] {{-1,-1,-1},{-1,-1,1},{0,1,1},{0,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		Assert.assertTrue(setCombinations.contains(gr));
+		
+	}
+	
+	/**
+	 * {-1,-1,-1},{-1,-1,1},{-1,1,1},{1,1,1} is valid
+	 */
+	@Test
+	public void combinationGroupBIsValidResult(){
+		
+		//given
+		int numTeamsPerGroup = 4;
+		
+		//when
+		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);		
+		
+		//then
+		GroupResult gr = new GroupResult(new int[][] {{-1,-1,-1},{-1,-1,1},{-1,1,1},{1,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		Assert.assertTrue(setCombinations.contains(gr));
+		
+	}
+	
+	/**
+	 * {-1,-1,0},{-1,-1,1},{-1,0,1},{1,1,1} is valid
+	 */
+	@Test
+	public void combinationGroupCIsValidResult(){
+		
+		//given
+		int numTeamsPerGroup = 4;
+		
+		//when
+		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);		
+		
+		//then
+		GroupResult gr = new GroupResult(new int[][] {{-1,-1,0},{-1,-1,1},{-1,0,1},{1,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		Assert.assertTrue(setCombinations.contains(gr));
+		
+	}
+	
+	/**
+	 * {-1,-1,0},{-1,-1,1},{-1,1,1},{0,1,1} is valid
+	 */
+	@Test
+	public void combinationGroupDIsValidResult(){
+		
+		//given
+		int numTeamsPerGroup = 4;
+		
+		//when
+		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);		
+		
+		//then
+		GroupResult gr = new GroupResult(new int[][] {{-1,-1,0},{-1,-1,1},{-1,1,1},{0,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		Assert.assertTrue(setCombinations.contains(gr));
+		
+	}
+	
+	/**
+	 * {-1,-1,-1},{-1,0,1},{-1,1,1},{0,1,1} is valid
+	 */
+	@Test
+	public void combinationGroupEIsValidResult(){
+		
+		//given
+		int numTeamsPerGroup = 4;
+		
+		//when
+		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);		
+		
+		//then
+		GroupResult gr = new GroupResult(new int[][] {{-1,-1,-1},{-1,0,1},{-1,1,1},{0,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		Assert.assertTrue(setCombinations.contains(gr));
+		
+	}
+	
+	/**
+	 * {-1,-1,0},{-1,-1,1},{-1,0,1},{1,1,1} is valid
+	 */
+	@Test
+	public void combinationGroupFIsValidResult(){
+		
+		//given
+		int numTeamsPerGroup = 4;
+		
+		//when
+		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);		
+		
+		//then
+		GroupResult gr = new GroupResult(new int[][] {{-1,-1,0},{-1,-1,1},{-1,0,1},{1,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		Assert.assertTrue(setCombinations.contains(gr));
+		
+	}
+	
+	/**
+	 * {-1,-1,0},{-1,0,1},{-1,0,1},{0,1,1} is valid
+	 */
+	@Test
+	public void combinationGroupGIsValidResult(){
+		
+		//given
+		int numTeamsPerGroup = 4;
+		
+		//when
+		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);		
+		
+		//then
+		GroupResult gr = new GroupResult(new int[][] {{-1,-1,0},{-1,0,1},{-1,0,1},{0,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		Assert.assertTrue(setCombinations.contains(gr));
+		
+	}
+	
+	/**
+	 * {-1,-1,0},{-1,0,0},{-1,0,1},{1,1,1} is valid
+	 */
+	@Test
+	public void combinationGroupHIsValidResult(){
+		
+		//given
+		int numTeamsPerGroup = 4;
+		
+		//when
+		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);		
+		
+		//then
+		GroupResult gr = new GroupResult(new int[][] {{-1,-1,0},{-1,0,0},{-1,0,1},{1,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		Assert.assertTrue(setCombinations.contains(gr));
+		
 	}
 	
 

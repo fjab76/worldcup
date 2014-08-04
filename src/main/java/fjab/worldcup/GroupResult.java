@@ -35,7 +35,7 @@ public final class GroupResult {
 	 * @param teamResults Array of integers containing all the possible columns than can be found in groupResult. 
 	 * The order of these columns is used as a reference to sort the columns in groupResult.
 	 */
-	public GroupResult(int[][] groupResult, int[][] teamResults) {
+	public GroupResult(Integer[][] groupResult, int[][] teamResults) {
 
 		/*
 		 * The elements of groupResult are stored in a new int[][] (to avoid
@@ -45,8 +45,16 @@ public final class GroupResult {
 		results = new int[groupResult.length][];
 
 		for (int j = 0; j < groupResult.length; j++) {
+			
+			if(groupResult[j].length!=groupResult.length-1)
+				throw new IllegalArgumentException("The array dimensions must be n x m with m=n-1"); 
+			
 			results[j] = new int[groupResult[j].length];
 			for (int k = 0; k < groupResult[j].length; k++) {
+				
+				if(groupResult[j][k]!=-1 && groupResult[j][k]!=0 && groupResult[j][k]!=1)
+					throw new IllegalArgumentException("The only elements allowed in the array are 1,0 and -1");
+				
 				results[j][k] = groupResult[j][k];
 			}
 		}

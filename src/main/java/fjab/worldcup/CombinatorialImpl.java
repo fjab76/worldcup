@@ -1,9 +1,12 @@
 package fjab.worldcup;
 
-import java.util.stream.*;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.paukov.combinatorics.Factory;
 import org.paukov.combinatorics.Generator;
@@ -63,24 +66,14 @@ public class CombinatorialImpl implements Group {
 		
 		Set<GroupResult> groupResultCombinationsFiltered = generator.generateAllObjects().stream()
 				  .map(ICombinatoricsVector::getVector)
-				  .map(x -> convertToArray(x,numTeamsPerGroup))
-				  .filter(this::filter2)
-				  .filter(x -> this.isValidCombination(x,numTeamsPerGroup))
+				  .map(x -> MatrixUtil.convertToArray(x))
+				  .filter(this::checkElements)
+				  .filter(x -> this.isValidCombination(x))
 				  .map(x -> new GroupResult(x,individualResultCombinations))
 				  .collect(Collectors.toSet());
 		
-		if(true) return groupResultCombinationsFiltered;
+		return groupResultCombinationsFiltered;
 
-		
-		Set<GroupResult> groupResultCombinations = generator.generateAllObjects().stream()
-		  .map(ICombinatoricsVector::getVector)
-		  .map(x -> convertToArray(x,numTeamsPerGroup))
-		  .filter(x -> this.isValidCombination(x,numTeamsPerGroup))	  
-		  .map(x -> new GroupResult(x,individualResultCombinations))
-		  .collect(Collectors.toSet());
-		
-		
-		return groupResultCombinations;
 	}
 	
 	private boolean filter1(int[][] combination){
@@ -114,23 +107,29 @@ public class CombinatorialImpl implements Group {
 		return true;
 	}
 	
-	private boolean filter2(int[][] combination){
-		
-		int counter1s=0, counter0s=0, counter_1s=0;
-		for(int j=0; j<combination.length; j++){
-			for(int k=0; k<combination[j].length; k++){
-				if(combination[j][k]==1) counter1s++; 
-				else if(combination[j][k]==0) counter0s++; 
-				else if(combination[j][k]==-1) counter_1s++;
-			}
+	private boolean checkElements(Integer[][] combination){
+
+		//All elements must be one of these values: -1,0,1
+		if(Stream.of(combination).flatMap(x -> Stream.of(x)).filter(x -> (x!=0 && x!=1 && x!=-1)).count()==0){
+			return true;
 		}
-		return (counter0s/2*2==counter0s && counter1s==counter_1s);
 		
+		//The number of 0s must be even
+		//The number of 1s must be equal to the number of -1s
+		Map<Integer,List<Integer>> map = MatrixUtil.groupElements(combination);		
+		int num0s = map.get(Integer.valueOf(0)).size();			
+		return (num0s/2*2==num0s && map.get(Integer.valueOf(1)).size()==map.get(Integer.valueOf(-1)).size());
 	}
 	
-	private boolean isValidCombination(int[][] combination, int numTeamsPerGroup){
-		return isValidCombination(combination, numTeamsPerGroup, 1);
+	private boolean checkArrayDimensions(int[][] combination){
+		
+		return Stream.of(combination).filter(x -> x.length!=combination.length-1).count()==0;
 	}
+		
+	
+	/*private boolean isValidCombination(int[][] combination, int numTeamsPerGroup){
+		return isValidCombination(combination, numTeamsPerGroup, 1);
+	}*/
 	
 	/**
 	 * Checks if the combination of results in a group passed as an argument is a valid combination. It is a valid combination if for
@@ -139,83 +138,67 @@ public class CombinatorialImpl implements Group {
 	 * @param combination 2-dimensional array representing the results in a group
 	 * @return boolean True if the given combination is valid. Otherwise, false.
 	 */
-	private boolean isValidCombination(int[][] originalCombination, int numTeamsPerGroup, int round) {				
+	private boolean isValidCombination(Integer[][] originalCombination) {				
 		
 		//Copying original array into other object
-		int[][] combination = new int[originalCombination.length][];
+		Integer[][] combination = new Integer[originalCombination.length][];
 		for(int j=0; j<combination.length; j++){
 			combination[j] = Arrays.copyOf(originalCombination[j], originalCombination[j].length);
 		}
 		
-		//Checking preconditions		
-		assert (int) Stream.of(combination).flatMapToInt(x -> IntStream.of(x)).filter(x -> (x!=0 && x!=1 && x!=-1)).count()==0 : "values of the array must be -1,0 or 1";
-		assert Stream.of(combination).filter(x -> x.length!=combination.length-1).count()==0 : "number of team results must be equal to number of teams minus 1";	
+		sortArray(combination);
 		
-		
-		//Counter of linked results for each team used for convenience in order to ensure that a linked result only 
-		//can be part of one pair
-		int[] counter = new int[combination.length];		
-		
-		//Looping over teams
-		for(int i=0; i<combination.length-1; i++){
+		//Looping over elements of 0-th column
+		for(int i=0; i<combination[0].length; i++){
+			int searchedValue = -combination[0][i];
 			
-			//Counter of teams available to look for pairs (Two teams cannot have more than one pair of linked results)
-			int numTeamsToSearchForLinkedElement = combination.length-1;
+			int columnIndexUpperLimit = combination.length-1-i;
+			int columnIndex = findFirstColumnContainingValue(combination,searchedValue,columnIndexUpperLimit);
+			//As soon as a result in one team fails to find its partner in another team, we can conclude that the combination
+			//is not valid
+			if(columnIndex==-1) return false;
 			
-			//Looping over results of i-th team
-			for(int j=counter[i]; j<combination[i].length; j++){
-				
-				final int searchedValue = -combination[i][j];
-				//Looping over remaining teams to count number of occurrences of possible partners in each team 
-				int[] numberOfOccurrences = new int[combination.length];
-				for(int k=i+1; k<=numTeamsToSearchForLinkedElement; k++){
-					numberOfOccurrences[k] = (int) Arrays.stream(Arrays.copyOfRange(combination[k],counter[k],combination[k].length))
-												   .filter(y -> y==searchedValue)
-												   .count();
-				}
-
-				int max = Arrays.stream(numberOfOccurrences).max().orElse(0);
-				
-				//As soon as a result in one team fails to find its partner in another team, we can conclude that the combination
-				//is not valid
-				if(max==0){
-					if(round<=numTeamsPerGroup){
-						putTeamAtTheEnd(originalCombination, 0);
-						return isValidCombination(originalCombination, numTeamsPerGroup, ++round);
-					}
-					else
-						return false;
-				}
-								
-				int partnerTeam = IntStream.range(0, numberOfOccurrences.length)
-						                   .filter(x -> numberOfOccurrences[x]==max)
-						                   .findFirst().getAsInt();
-																		
-					
-				//Looping over results of k-th team to find all possible linked results
-				for(int m=counter[partnerTeam]; m<combination[partnerTeam].length; m++){											
-					
-					if(combination[partnerTeam][m]==-combination[i][j]){
-						counter[partnerTeam]++;
-						//A linked result only can be part of one pair. By moving it to the top, it is ensured that
-						//is not considered for any other pair
-						putLinkedResultAtTheBeginning(combination[partnerTeam],m);
-						
-						if(partnerTeam<numTeamsToSearchForLinkedElement){
-							//Two teams cannot have more than one pair of linked results. By moving the selected team to the end,
-							//it is ensured that said team is not considered for any other pair with the i-th team
-							putTeamAtTheEnd(combination,counter,partnerTeam);
-						}
-						numTeamsToSearchForLinkedElement--;
-						break;
-					}
-				}										
-			}
+			sortArrayByInducedOrder(combination[columnIndex],searchedValue);
+			MatrixUtil.moveElementFromTo(combination[columnIndex], columnIndex, columnIndexUpperLimit);
 		}
-		return true;
+		
+		if(trimMatrix(combination)){
+			return isValidCombination(combination);
+		}
+		else{
+			return combination[0][0].equals(-combination[1][0]);
+		}				
 	}
 
 	
+
+
+	private boolean trimMatrix(Integer[][] combination) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	private int findFirstColumnContainingValue(Integer[][] combination, int searchedValue, int columnIndexUpperLimit) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	private void sortArray(Integer[][] matrix) {
+		
+		int scarcestElement = MatrixUtil.findScarcestElement(matrix);
+		int index = MatrixUtil.indexOfFirstColumnWithElement(matrix, scarcestElement);
+		MatrixUtil.moveElementFromTo(matrix, index, 0);
+		sortArrayByInducedOrder(matrix[0], scarcestElement);
+		
+	}
+
+	private void sortArrayByInducedOrder(Integer[] array, int scarcestElement) {
+		Arrays.sort(array, (o1,o2) -> {
+			if(((Integer) o1).intValue()==scarcestElement) return -1;
+			else if(((Integer) o2).intValue()==scarcestElement) return 1;
+			else return ((Integer) o1).compareTo(((Integer) o2));
+		});
+	}
 
 	private void putTeamAtTheEnd(int[][] combination, int[] counter, int k) {
 
@@ -232,16 +215,6 @@ public class CombinatorialImpl implements Group {
 		
 	}
 	
-	private void putTeamAtTheEnd(int[][] combination, int k) {
-
-		for(int j=k; j<combination.length-1; j++){
-			//swapping j and j+1 values
-			int[] jplus1 = combination[j+1];
-			combination[j+1] = combination[j];
-			combination[j] = jplus1;
-		}
-		
-	}
 
 	private void putLinkedResultAtTheBeginning(int[] array, int m) {
 		
@@ -266,16 +239,11 @@ public class CombinatorialImpl implements Group {
 		return resultCombinations;
 	}
 	
-	private int[][] convertToArray(List<int[]> list, int numTeamsPerGroup){
-		
-		int[][] combination = new int[numTeamsPerGroup][numTeamsPerGroup-1];
-		
-		for(int j=0; j<list.size(); j++){
-			combination[j] = IntStream.of(list.get(j)).toArray();
-		}
-		
-		return combination;
-	}
+	
+	
+	
+	
+	
 
 }
  

@@ -67,7 +67,7 @@ public class CombinatorialImpl implements Group {
 		Set<GroupResult> groupResultCombinationsFiltered = generator.generateAllObjects().stream()
 				  .map(ICombinatoricsVector::getVector)
 				  .map(x -> MatrixUtil.convertToArray(x))
-				  .filter(this::checkElements)
+				  .filter(this::checkMatrix)
 				  .filter(x -> this.isValidCombination(x))
 				  .map(x -> new GroupResult(x,individualResultCombinations))
 				  .collect(Collectors.toSet());
@@ -107,21 +107,28 @@ public class CombinatorialImpl implements Group {
 		return true;
 	}
 	
+	private boolean checkMatrix(Integer[][] combination){
+		return checkElements(combination) && checkArrayDimensions(combination);
+	}
+	
 	private boolean checkElements(Integer[][] combination){
 
 		//All elements must be one of these values: -1,0,1
-		if(Stream.of(combination).flatMap(x -> Stream.of(x)).filter(x -> (x!=0 && x!=1 && x!=-1)).count()==0){
-			return true;
+		if(Stream.of(combination).flatMap(x -> Stream.of(x)).filter(x -> (x!=0 && x!=1 && x!=-1)).count()!=0){
+			return false;
 		}
 		
 		//The number of 0s must be even
 		//The number of 1s must be equal to the number of -1s
 		Map<Integer,List<Integer>> map = MatrixUtil.groupElements(combination);		
-		int num0s = map.get(Integer.valueOf(0)).size();			
-		return (num0s/2*2==num0s && map.get(Integer.valueOf(1)).size()==map.get(Integer.valueOf(-1)).size());
+		int num0s = map.get(Integer.valueOf(0))!=null?map.get(Integer.valueOf(0)).size():0;	
+		int num1s = map.get(Integer.valueOf(1))!=null?map.get(Integer.valueOf(1)).size():0;
+		int numMinus1s = map.get(Integer.valueOf(-1))!=null?map.get(Integer.valueOf(-1)).size():0;
+		
+		return (num0s/2*2==num0s && num1s==numMinus1s);
 	}
 	
-	private boolean checkArrayDimensions(int[][] combination){
+	private boolean checkArrayDimensions(Integer[][] combination){
 		
 		return Stream.of(combination).filter(x -> x.length!=combination.length-1).count()==0;
 	}
@@ -159,11 +166,12 @@ public class CombinatorialImpl implements Group {
 			if(columnIndex==-1) return false;
 			
 			sortArrayByInducedOrder(combination[columnIndex],searchedValue);
-			MatrixUtil.moveElementFromTo(combination[columnIndex], columnIndex, columnIndexUpperLimit);
+			MatrixUtil.moveElementFromTo(combination, columnIndex, columnIndexUpperLimit);
 		}
 		
-		if(trimMatrix(combination)){
-			return isValidCombination(combination);
+		Integer[][] trimmedCombination = trimMatrix(combination);
+		if(trimmedCombination!=null){
+			return isValidCombination(trimmedCombination);
 		}
 		else{
 			return combination[0][0].equals(-combination[1][0]);
@@ -173,14 +181,42 @@ public class CombinatorialImpl implements Group {
 	
 
 
-	private boolean trimMatrix(Integer[][] combination) {
-		// TODO Auto-generated method stub
-		return false;
+	private Integer[][] trimMatrix(Integer[][] originalCombination) {
+					
+		//Removing first column and first row
+		
+		//In this case, it is not possible to trim the matrix
+		if(originalCombination.length<=2){
+			return null;
+		}
+		
+		Integer[][] combination = new Integer[originalCombination.length-1][];
+		for(int j=0; j<combination.length; j++){
+			combination[j] = Arrays.copyOfRange(originalCombination[j+1],1,originalCombination[j+1].length);
+		}
+		
+		return combination;
 	}
 
-	private int findFirstColumnContainingValue(Integer[][] combination, int searchedValue, int columnIndexUpperLimit) {
-		// TODO Auto-generated method stub
-		return 0;
+	private int findFirstColumnContainingValue(Integer[][] combination, int searchedValue, int columnIndexUpperLimit) {		
+		
+		int[] searchedValueOccurrences = IntStream.range(1, columnIndexUpperLimit+1)
+        .map(x -> (int)Stream.of(combination[x])
+       		            .filter(y -> y.equals(searchedValue))
+       		            .count())
+        .toArray();
+		
+		int maxPosition = IntStream.range(0, searchedValueOccurrences.length)
+		.reduce(0, (maximumPosition,element) -> {if(searchedValueOccurrences[element]>searchedValueOccurrences[maximumPosition]) maximumPosition=element;return maximumPosition;});
+		
+		return searchedValueOccurrences[maxPosition]==0?-1:maxPosition+1;
+			
+		
+		/*return IntStream.range(1, columnIndexUpperLimit+1)
+		         .filter(x -> Stream.of(combination[x])
+		        		            .filter(y -> y.equals(searchedValue))
+		        		            .count()>0)
+		         .findFirst().orElse(-1);*/
 	}
 
 	private void sortArray(Integer[][] matrix) {

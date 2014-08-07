@@ -13,8 +13,9 @@ public class MatrixUtil {
 		
 		Map<Integer,List<Integer>> map = groupElements(matrix);
 		
+		//The initial value of the reduce function may be any value of matrix
 		return map.keySet().stream()
-		                   .reduce(Integer.valueOf(1), (result,element) -> {if(map.get(element).size()<map.get(result).size()) result = element;return result;})
+		                   .reduce(matrix[0][0], (result,element) -> {if(map.get(element).size()<map.get(result).size()) result = element;return result;})
 		                   .intValue();
 		
 	}
@@ -40,9 +41,11 @@ public class MatrixUtil {
 		Integer[][] combination = new Integer[list.size()][];
 		
 		for(int j=0; j<list.size(); j++){
-			combination[j] = (Integer[]) Stream.of(list.get(j)).map(x -> IntStream.of(x).boxed()).toArray();
+			combination[j] = new Integer[list.get(j).length];
+			for(int k=0; k<list.get(j).length; k++)
+				combination[j][k] = list.get(j)[k];
 		}
-		
+			
 		return combination;
 	}
 	

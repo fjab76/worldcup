@@ -49,7 +49,7 @@ public class CombinatorialImplTest {
 		}
 		
 		//then
-		GroupResult gr = new GroupResult(new int[][] {{0,0},{0,0},{0,0}},_3TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		GroupResult gr = new GroupResult(new Integer[][] {{0,0},{0,0},{0,0}},_3TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
 		Assert.assertTrue(setCombinations.contains(gr));
 		
 	}
@@ -70,7 +70,7 @@ public class CombinatorialImplTest {
 		}
 		
 		//then
-		GroupResult gr = new GroupResult(new int[][] {{-1,-1},{-1,1},{1,1}},_3TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		GroupResult gr = new GroupResult(new Integer[][] {{-1,-1},{-1,1},{1,1}},_3TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
 		Assert.assertTrue(setCombinations.contains(gr));
 		
 	}
@@ -91,7 +91,7 @@ public class CombinatorialImplTest {
 		}
 		
 		//then
-		GroupResult gr = new GroupResult(new int[][] {{-1,-1},{0,1},{0,1}},_3TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		GroupResult gr = new GroupResult(new Integer[][] {{-1,-1},{0,1},{0,1}},_3TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
 		Assert.assertTrue(setCombinations.contains(gr));
 		
 	}
@@ -112,7 +112,7 @@ public class CombinatorialImplTest {
 		}
 		
 		//then
-		GroupResult gr = new GroupResult(new int[][] {{-1,0},{-1,0},{1,1}},_3TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		GroupResult gr = new GroupResult(new Integer[][] {{-1,0},{-1,0},{1,1}},_3TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
 		Assert.assertTrue(setCombinations.contains(gr));
 		
 	}
@@ -133,7 +133,7 @@ public class CombinatorialImplTest {
 		}
 		
 		//then
-		GroupResult gr = new GroupResult(new int[][] {{-1,1},{-1,1},{-1,1}},_3TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		GroupResult gr = new GroupResult(new Integer[][] {{-1,1},{-1,1},{-1,1}},_3TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
 		Assert.assertTrue(setCombinations.contains(gr));
 		
 	}
@@ -154,7 +154,7 @@ public class CombinatorialImplTest {
 		}
 		
 		//then
-		GroupResult gr = new GroupResult(new int[][] {{-1,0},{-1,1},{0,1}},_3TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		GroupResult gr = new GroupResult(new Integer[][] {{-1,0},{-1,1},{0,1}},_3TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
 		Assert.assertTrue(setCombinations.contains(gr));
 		
 	}
@@ -175,7 +175,7 @@ public class CombinatorialImplTest {
 		}
 		
 		//then
-		GroupResult gr = new GroupResult(new int[][] {{-1,0},{-1,1},{0,1}},_3TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		GroupResult gr = new GroupResult(new Integer[][] {{-1,0},{-1,1},{0,1}},_3TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
 		Assert.assertTrue(setCombinations.contains(gr));
 		
 	}
@@ -210,7 +210,7 @@ public class CombinatorialImplTest {
 		}
 		
 		//then
-		GroupResult gr = new GroupResult(new int[][] {{0,0,0},{0,0,0},{0,0,0},{0,0,0}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		GroupResult gr = new GroupResult(new Integer[][] {{0,0,0},{0,0,0},{0,0,0},{0,0,0}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
 		Assert.assertTrue(setCombinations.contains(gr));
 		
 	}
@@ -228,7 +228,7 @@ public class CombinatorialImplTest {
 		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);		
 		
 		//then
-		GroupResult gr = new GroupResult(new int[][] {{-1,-1,0},{-1,0,0},{-1,0,1},{1,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		GroupResult gr = new GroupResult(new Integer[][] {{-1,-1,0},{-1,0,0},{-1,0,1},{1,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
 		Assert.assertTrue(setCombinations.contains(gr));
 		
 	}
@@ -247,7 +247,7 @@ public class CombinatorialImplTest {
 		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);		
 		
 		//then
-		GroupResult gr = new GroupResult(new int[][] {{1,1,1},{-1,0,1},{-1,-1,1},{-1,-1,0}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		GroupResult gr = new GroupResult(new Integer[][] {{1,1,1},{-1,0,1},{-1,-1,1},{-1,-1,0}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
 		Assert.assertTrue(setCombinations.contains(gr));
 		
 	}
@@ -265,7 +265,7 @@ public class CombinatorialImplTest {
 		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);		
 		
 		//then
-		GroupResult gr = new GroupResult(new int[][] {{1,1,1},{-1,1,1},{-1,-1,0},{-1,-1,0}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		GroupResult gr = new GroupResult(new Integer[][] {{1,1,1},{-1,1,1},{-1,-1,0},{-1,-1,0}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
 		Assert.assertTrue(setCombinations.contains(gr));
 		
 	}
@@ -283,7 +283,7 @@ public class CombinatorialImplTest {
 		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);		
 		
 		//then
-		GroupResult gr = new GroupResult(new int[][] {{0,0,1},{-1,0,0},{0,0,0},{0,0,0}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		GroupResult gr = new GroupResult(new Integer[][] {{0,0,1},{-1,0,0},{0,0,0},{0,0,0}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
 		Assert.assertTrue(setCombinations.contains(gr));
 		
 	}
@@ -301,7 +301,7 @@ public class CombinatorialImplTest {
 		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);		
 		
 		//then
-		GroupResult gr = new GroupResult(new int[][] {{-1,-1,0},{-1,0,1},{0,0,0},{0,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		GroupResult gr = new GroupResult(new Integer[][] {{-1,-1,0},{-1,0,1},{0,0,0},{0,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
 		Assert.assertTrue(setCombinations.contains(gr));
 		
 	}
@@ -314,7 +314,7 @@ public class CombinatorialImplTest {
 	@Test
 	public void createCombination(){
 		
-		GroupResult gr = new GroupResult(new int[][] {{1,1,1},{-1,0,1},{-1,-1,1},{-1,-1,0}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		GroupResult gr = new GroupResult(new Integer[][] {{1,1,1},{-1,0,1},{-1,-1,1},{-1,-1,0}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
 		System.out.println("\n\n"+gr.toString());
 		
 	}
@@ -352,7 +352,7 @@ public class CombinatorialImplTest {
 		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);		
 		
 		//then
-		GroupResult gr = new GroupResult(new int[][] {{-1,-1,-1},{-1,-1,1},{0,1,1},{0,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		GroupResult gr = new GroupResult(new Integer[][] {{-1,-1,-1},{-1,-1,1},{0,1,1},{0,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
 		Assert.assertTrue(setCombinations.contains(gr));
 		
 	}
@@ -370,7 +370,7 @@ public class CombinatorialImplTest {
 		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);		
 		
 		//then
-		GroupResult gr = new GroupResult(new int[][] {{-1,-1,-1},{-1,-1,1},{-1,1,1},{1,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		GroupResult gr = new GroupResult(new Integer[][] {{-1,-1,-1},{-1,-1,1},{-1,1,1},{1,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
 		Assert.assertTrue(setCombinations.contains(gr));
 		
 	}
@@ -388,7 +388,7 @@ public class CombinatorialImplTest {
 		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);		
 		
 		//then
-		GroupResult gr = new GroupResult(new int[][] {{-1,-1,0},{-1,-1,1},{-1,0,1},{1,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		GroupResult gr = new GroupResult(new Integer[][] {{-1,-1,0},{-1,-1,1},{-1,0,1},{1,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
 		Assert.assertTrue(setCombinations.contains(gr));
 		
 	}
@@ -406,7 +406,7 @@ public class CombinatorialImplTest {
 		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);		
 		
 		//then
-		GroupResult gr = new GroupResult(new int[][] {{-1,-1,0},{-1,-1,1},{-1,1,1},{0,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		GroupResult gr = new GroupResult(new Integer[][] {{-1,-1,0},{-1,-1,1},{-1,1,1},{0,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
 		Assert.assertTrue(setCombinations.contains(gr));
 		
 	}
@@ -424,7 +424,7 @@ public class CombinatorialImplTest {
 		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);		
 		
 		//then
-		GroupResult gr = new GroupResult(new int[][] {{-1,-1,-1},{-1,0,1},{-1,1,1},{0,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		GroupResult gr = new GroupResult(new Integer[][] {{-1,-1,-1},{-1,0,1},{-1,1,1},{0,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
 		Assert.assertTrue(setCombinations.contains(gr));
 		
 	}
@@ -442,7 +442,7 @@ public class CombinatorialImplTest {
 		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);		
 		
 		//then
-		GroupResult gr = new GroupResult(new int[][] {{-1,-1,0},{-1,-1,1},{-1,0,1},{1,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		GroupResult gr = new GroupResult(new Integer[][] {{-1,-1,0},{-1,-1,1},{-1,0,1},{1,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
 		Assert.assertTrue(setCombinations.contains(gr));
 		
 	}
@@ -460,7 +460,7 @@ public class CombinatorialImplTest {
 		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);		
 		
 		//then
-		GroupResult gr = new GroupResult(new int[][] {{-1,-1,0},{-1,0,1},{-1,0,1},{0,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		GroupResult gr = new GroupResult(new Integer[][] {{-1,-1,0},{-1,0,1},{-1,0,1},{0,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
 		Assert.assertTrue(setCombinations.contains(gr));
 		
 	}
@@ -478,7 +478,7 @@ public class CombinatorialImplTest {
 		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);		
 		
 		//then
-		GroupResult gr = new GroupResult(new int[][] {{-1,-1,0},{-1,0,0},{-1,0,1},{1,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
+		GroupResult gr = new GroupResult(new Integer[][] {{-1,-1,0},{-1,0,0},{-1,0,1},{1,1,1}},_4TEAM_GROUP_INDIVIDUAL_COMBINATIONS);
 		Assert.assertTrue(setCombinations.contains(gr));
 		
 	}

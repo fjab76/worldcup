@@ -9,9 +9,9 @@ import org.junit.Test;
 import fjab.worldcup.api.GroupResult;
 
 
-public class CombinatorialImplTest {
+public class BuilderImplTest {
 	
-	private CombinatorialImpl impl;
+	private BuilderImpl impl;
 	
 	static final int[][] _4TEAM_GROUP_INDIVIDUAL_COMBINATIONS = {
 		{-1,-1,-1},
@@ -35,165 +35,9 @@ public class CombinatorialImplTest {
 		{1,1}
 	};
 	
-	/**
-	 * {0,0},{0,0},{0,0} is valid
-	 */
-	@Test	
-	public void _3TeamGroups_allZeroCombinationIsValidResult(){
-		
-		//given
-		int numTeamsPerGroup = 3;
-		
-		//when
-		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);
-		for(GroupResult combination : setCombinations){
-			System.out.println(combination);
-		}
-		
-		//then
-		GroupResult gr = new GroupResult(new Integer[][] {{0,0},{0,0},{0,0}});
-		Assert.assertTrue(setCombinations.contains(gr));
-		
-	}
-	
-	/**
-	 * {-1,-1},{-1,1},{1,1} is valid
-	 */
-	@Test	
-	public void _3TeamGroups_combination1IsValidResult(){
-		
-		//given
-		int numTeamsPerGroup = 3;
-		
-		//when
-		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);
-		for(GroupResult combination : setCombinations){
-			//System.out.println(combination);
-		}
-		
-		//then
-		GroupResult gr = new GroupResult(new Integer[][] {{-1,-1},{-1,1},{1,1}});
-		Assert.assertTrue(setCombinations.contains(gr));
-		
-	}
-	
-	/**
-	 * {-1,-1},{0,1},{0,1} is valid
-	 */
-	@Test	
-	public void _3TeamGroups_combination2IsValidResult(){
-		
-		//given
-		int numTeamsPerGroup = 3;
-		
-		//when
-		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);
-		for(GroupResult combination : setCombinations){
-			//System.out.println(combination);
-		}
-		
-		//then
-		GroupResult gr = new GroupResult(new Integer[][] {{-1,-1},{0,1},{0,1}});
-		Assert.assertTrue(setCombinations.contains(gr));
-		
-	}
-	
-	/**
-	 * {-1,0},{-1,0},{1,1} is valid
-	 */
-	@Test	
-	public void _3TeamGroups_combination3IsValidResult(){
-		
-		//given
-		int numTeamsPerGroup = 3;
-		
-		//when
-		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);
-		for(GroupResult combination : setCombinations){
-			//System.out.println(combination);
-		}
-		
-		//then
-		GroupResult gr = new GroupResult(new Integer[][] {{-1,0},{-1,0},{1,1}});
-		Assert.assertTrue(setCombinations.contains(gr));
-		
-	}
-	
-	/**
-	 * {-1,1},{-1,1},{-1,1} is valid
-	 */
-	@Test	
-	public void _3TeamGroups_combination4IsValidResult(){
-		
-		//given
-		int numTeamsPerGroup = 3;
-		
-		//when
-		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);
-		for(GroupResult combination : setCombinations){
-			//System.out.println(combination);
-		}
-		
-		//then
-		GroupResult gr = new GroupResult(new Integer[][] {{-1,1},{-1,1},{-1,1}});
-		Assert.assertTrue(setCombinations.contains(gr));
-		
-	}
-	
-	/**
-	 * {-1,0},{-1,1},{0,1} is valid
-	 */
-	@Test	
-	public void _3TeamGroups_combination5IsValidResult(){
-		
-		//given
-		int numTeamsPerGroup = 3;
-		
-		//when
-		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);
-		for(GroupResult combination : setCombinations){
-			//System.out.println(combination);
-		}
-		
-		//then
-		GroupResult gr = new GroupResult(new Integer[][] {{-1,0},{-1,1},{0,1}});
-		Assert.assertTrue(setCombinations.contains(gr));
-		
-	}
-	
-	/**
-	 * {-1,0},{0,0},{0,1} is valid
-	 */
-	@Test	
-	public void _3TeamGroups_combination6IsValidResult(){
-		
-		//given
-		int numTeamsPerGroup = 3;
-		
-		//when
-		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);
-		for(GroupResult combination : setCombinations){
-			//System.out.println(combination);
-		}
-		
-		//then
-		GroupResult gr = new GroupResult(new Integer[][] {{-1,0},{-1,1},{0,1}});
-		Assert.assertTrue(setCombinations.contains(gr));
-		
-	}
-	
-	@Test
-	public void _3TeamGroups_numberCombinationsIs7(){
-		
-		//given
-		int numTeamsPerGroup = 3;
-		
-		//when
-		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);
-		
-		//then
-		Assert.assertEquals(7,setCombinations.size());
-		
+	@Before
+	public void setup(){
+		impl = new BuilderImpl();
 	}
 	
 	/**
@@ -336,10 +180,6 @@ public class CombinatorialImplTest {
 	}
 	
 	
-	@Before
-	public void setup(){
-		impl = new CombinatorialImpl();
-	}
 	
 	/**
 	 * {-1,-1,-1},{-1,-1,1},{0,1,1},{0,1,1} is valid
@@ -484,7 +324,4 @@ public class CombinatorialImplTest {
 		Assert.assertTrue(setCombinations.contains(gr));
 		
 	}
-	
-	
-
 }

@@ -12,6 +12,10 @@ import org.paukov.combinatorics.Factory;
 import org.paukov.combinatorics.Generator;
 import org.paukov.combinatorics.ICombinatoricsVector;
 
+import fjab.worldcup.api.Group;
+import fjab.worldcup.api.GroupResult;
+import fjab.worldcup.util.MatrixUtil;
+
 /**
  * This implementation is based on the use of combinatorial methods. The results of a game are represented by GAME_RESULT:
  * loss (-1), draw (0) and win (1).
@@ -61,7 +65,7 @@ public class CombinatorialImpl implements Group {
 		//combinations is 715
 		//All the invalid combinations must be taken away from the total number of possible combinations.
 		
-		ICombinatoricsVector<int[]> originalVector = Factory.createVector(individualResultCombinations);
+		ICombinatoricsVector<int[]> originalVector = Factory.createVector(MatrixUtil.convertIntegerToIntMatrix(GroupResult.getSingleTeamResults(numTeamsPerGroup)));
 		Generator<int[]> generator = Factory.createMultiCombinationGenerator(originalVector, numTeamsPerGroup);
 		
 		Set<GroupResult> groupResultCombinationsFiltered = generator.generateAllObjects().stream()
@@ -69,7 +73,7 @@ public class CombinatorialImpl implements Group {
 				  .map(x -> MatrixUtil.convertToArray(x))
 				  .filter(this::checkMatrix)
 				  .filter(x -> this.isValidCombination(x))
-				  .map(x -> new GroupResult(x,individualResultCombinations))
+				  .map(x -> new GroupResult(x))
 				  .collect(Collectors.toSet());
 		
 		return groupResultCombinationsFiltered;

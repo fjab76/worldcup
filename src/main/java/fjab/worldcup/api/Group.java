@@ -1,4 +1,4 @@
-package fjab.worldcup;
+package fjab.worldcup.api;
 
 import java.util.Set;
 

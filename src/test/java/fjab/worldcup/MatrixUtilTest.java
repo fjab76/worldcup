@@ -5,6 +5,8 @@ import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Test;
 
+import fjab.worldcup.util.MatrixUtil;
+
 
 public class MatrixUtilTest {
 	
@@ -42,5 +44,59 @@ public class MatrixUtilTest {
 		Assert.assertEquals(4,matrix[4].intValue());
 	}
 	
+	@Test
+	public void matchFullArrays(){
+		
+		//given
+		Integer[] reference = {5,1,3,2,4};
+		Integer[] arrayToBeMatched = {1,5,2,3,4};
+		
+		//when
+		Integer[] resultingArray = MatrixUtil.matchArrays(reference, arrayToBeMatched);
+		
+		//then
+		Assert.assertArrayEquals(new Integer[]{5,1,3,2,4}, resultingArray);		
+	}
 	
+	@Test
+	public void matchArraysWithDifferentDimensions(){
+		
+		//given
+		Integer[] reference = {1,3,2,4};
+		Integer[] arrayToBeMatched = {1,2,3,4,7};
+		
+		//when
+		Integer[] resultingArray = MatrixUtil.matchArrays(reference, arrayToBeMatched);
+		
+		//then
+		Assert.assertArrayEquals(null, resultingArray);		
+	}
+	
+	@Test
+	public void matchPartialArray(){
+		
+		//given
+		Integer[] reference = {null,1,3,2,null};
+		Integer[] arrayToBeMatched = {0,2,3,4,1};
+		
+		//when
+		Integer[] resultingArray = MatrixUtil.matchArrays(reference, arrayToBeMatched);
+		
+		//then
+		Assert.assertArrayEquals(new Integer[]{1,3,2,0,4}, resultingArray);		
+	}
+	
+	@Test
+	public void matchedArrayIsNull(){
+		
+		//given
+		Integer[] reference = {1,1,null};
+		Integer[] arrayToBeMatched = {-1,-1,1};
+		
+		//when
+		Integer[] resultingArray = MatrixUtil.matchArrays(reference, arrayToBeMatched);
+		
+		//then
+		Assert.assertArrayEquals(null, resultingArray);		
+	}
 }

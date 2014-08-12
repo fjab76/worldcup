@@ -1,5 +1,6 @@
 package fjab.worldcup;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,27 +22,30 @@ public class BuilderImpl implements GroupResultCalculator {
 		
 		Set<GroupResult> results = new HashSet<>();
 		
-		Integer[][] singleTeamResults = singleTeamResult.getSingleTeamResults(numTeams);		
+		Integer[][] singleTeamResults = singleTeamResult.getSingleTeamResults(numTeams);	
+		Integer[][] groupResults = new Integer[numTeams][numTeams-1];
 		
+		//calculateTeamGroupResult(results, singleTeamResults, groupResults, 0);
 				
 		//first team
-		int firstTeam=0;
+		/*int firstTeam=0;
 		for(int i=0; i<singleTeamResults.length; i++){
 
-			Integer[][] groupResults = new Integer[numTeams][numTeams-1];
-			groupResults[0] = singleTeamResults[i];
+			//Integer[][] groupResults = new Integer[numTeams][numTeams-1];
+			groupResults[firstTeam] = singleTeamResults[i];
 			for(int m=firstTeam+1; m<groupResults.length; m++)
-				groupResults[m][firstTeam] = -groupResults[firstTeam][m-1];
+				groupResults[m][firstTeam] = -groupResults[firstTeam][m-1];*/
 			
 			//second team
-			int secondTeam=1;
+			calculateTeamGroupResult(numTeams, results, singleTeamResults, groupResults, 0);
+/*			int secondTeam=1;
 			for(int j=0; j<singleTeamResults.length; j++){
 				
-				Integer[] array = MatrixUtil.matchArrays(groupResults[1], singleTeamResults[j]);
+				Integer[] array = MatrixUtil.matchArrays(groupResults[secondTeam], singleTeamResults[j]);
 				if(array!=null){
 					//groupResults[1][1] = array[1];
 					//groupResults[1][2] = array[2];
-					groupResults[1] = array; 
+					groupResults[secondTeam] = array; 
 					
 					for(int m=secondTeam+1; m<groupResults.length; m++)
 						groupResults[m][secondTeam] = -groupResults[secondTeam][m-1];
@@ -50,29 +54,7 @@ public class BuilderImpl implements GroupResultCalculator {
 				
 					//third team
 					int thirdTeam=2;
-					for(int k=0; k<singleTeamResults.length; k++){
-						
-						Integer[] array2 = MatrixUtil.matchArrays(groupResults[2], singleTeamResults[k]);
-						if(array2!=null){
-							//groupResults[2][2] = array2[2];
-							groupResults[2] = array2;
-							for(int m=thirdTeam+1; m<groupResults.length; m++)
-								groupResults[m][thirdTeam] = -groupResults[thirdTeam][m-1];
-							
-							//groupResults[3][2] = -groupResults[2][2];					
-												
-							results.add(new GroupResult(groupResults));
-							
-							for(int m=thirdTeam; m<groupResults.length-1; m++){
-								groupResults[thirdTeam][m] = null;
-								
-								groupResults[m+1][thirdTeam] = null;
-							}
-							
-							//groupResults[2][2] = null;							
-							//groupResults[3][2] = null;	
-						}
-					}
+					calculateTeamGroupResult(results, singleTeamResults, groupResults, thirdTeam);
 					
 					for(int m=secondTeam; m<groupResults.length-1; m++){
 						groupResults[secondTeam][m] = null;
@@ -85,10 +67,39 @@ public class BuilderImpl implements GroupResultCalculator {
 					//groupResults[2][1] = null;
 					//groupResults[3][1] = null;
 				}
-			}
-		}			
+			}*/
+		//}			
 		
 		return results;
+	}
+
+	private void calculateTeamGroupResult(int numTeams, Set<GroupResult> results, Integer[][] singleTeamResults,Integer[][] groupResults, int team) {
+		for(int k=0; k<singleTeamResults.length; k++){
+			
+			Integer[] array2 = null;
+			if(team==0)
+				array2 = Arrays.copyOf(singleTeamResults[k], singleTeamResults[k].length);
+			else
+				array2 = MatrixUtil.matchArrays(groupResults[team], singleTeamResults[k]);
+			
+			if(array2!=null){
+				groupResults[team] = array2;
+				for(int m=team+1; m<groupResults.length; m++)
+					groupResults[m][team] = -groupResults[team][m-1];				
+				
+				if(team==numTeams-1)
+					results.add(new GroupResult(groupResults));
+				else
+					calculateTeamGroupResult(numTeams, results, singleTeamResults, groupResults, team+1);
+				
+				//Initialising values for next iteration
+				for(int m=team; m<groupResults.length-1; m++){
+					groupResults[team][m] = null;
+					
+					groupResults[m+1][team] = null;
+				}	
+			}
+		}
 	}
 
 	private boolean isCompatibleResult(Integer[] integers, Integer[] integers2) {

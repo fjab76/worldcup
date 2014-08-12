@@ -127,10 +127,12 @@ public class MatrixUtil {
 		});
 	}
 	
-	public static Integer[] matchArrays(Integer[] reference, Integer[] arrayToBeMatched){
+	public static Integer[] matchArrays(Integer[] reference, Integer[] arrayToBeMatchedOriginal){
 		
-		if(reference.length!=arrayToBeMatched.length)
+		if(reference.length!=arrayToBeMatchedOriginal.length)
 			return null;
+		
+		Integer[] arrayToBeMatched = Arrays.copyOf(arrayToBeMatchedOriginal, arrayToBeMatchedOriginal.length);		
 		
 		Integer[] arrayWithoutNullsOriginal = removeNullElements(reference);
 		Integer[] arrayWithoutNulls = Arrays.copyOf(arrayWithoutNullsOriginal, arrayWithoutNullsOriginal.length);
@@ -211,6 +213,18 @@ public class MatrixUtil {
 				numNulls++;
 		
 		return numNulls;
+	}
+	
+	public static Integer[][] deepCopy(Integer[][] original){
+		
+		Integer[][] copy = new Integer[original.length][];
+		for(int j=0; j<original.length; j++){
+			copy[j] = new Integer[original[j].length];
+			for(int k=0; k<original[j].length; k++){
+				copy[j][k] = original[j][k];
+			}
+		}
+		return copy;
 	}
 
 }

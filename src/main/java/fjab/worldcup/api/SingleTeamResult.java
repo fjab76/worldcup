@@ -37,10 +37,10 @@ public final class SingleTeamResult {
 		if(singleTeamResults==null){
 			singleTeamResults = calculateSingleTeamResults(numTeams);
 			singleTeamResultsByGroupSize.put(numTeams, singleTeamResults);
-			return singleTeamResults;
+			return MatrixUtil.deepCopy(singleTeamResults);
 		}
 		else
-			return singleTeamResults;
+			return MatrixUtil.deepCopy(singleTeamResults);
 	}
 	
 	private Integer[][] calculateSingleTeamResults(int numTeams) {

@@ -1,12 +1,12 @@
 package fjab.worldcup.client;
 
-import fjab.worldcup.BuilderImpl;
+import fjab.worldcup.SolutionByConstruction;
 import fjab.worldcup.CommonHelper;
 import fjab.worldcup.api.GroupResultCalculator;
 
 public class Client {
 	
-	private static BuilderImpl builderImpl = new BuilderImpl();
+	private static SolutionByConstruction builderImpl = new SolutionByConstruction();
 
 	public static void main(String[] args) {
 		

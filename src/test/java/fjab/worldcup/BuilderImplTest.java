@@ -11,7 +11,7 @@ import fjab.worldcup.api.GroupResult;
 
 public class BuilderImplTest {
 	
-	private BuilderImpl impl;
+	private SolutionByConstruction impl;
 	
 	static final int[][] _4TEAM_GROUP_INDIVIDUAL_COMBINATIONS = {
 		{-1,-1,-1},
@@ -37,7 +37,7 @@ public class BuilderImplTest {
 	
 	@Before
 	public void setup(){
-		impl = new BuilderImpl();
+		impl = new SolutionByConstruction();
 	}
 	
 	/**

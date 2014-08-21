@@ -1,16 +1,14 @@
 package fjab.worldcup.api;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.paukov.combinatorics.Factory;
 import org.paukov.combinatorics.Generator;
 import org.paukov.combinatorics.ICombinatoricsVector;
 
-import fjab.worldcup.util.MatrixUtil;
+import fjab.worldcup.util.IntegerMatrix;
 
 /**
- * Singleton representing the results of a single team when considered as part of a group
+ * Utility class with methods to work with the results of a single team (as opposed to the combination of the results
+ * of all the teams in a group)
  */
 public final class SingleTeamResult {
 	
@@ -20,30 +18,11 @@ public final class SingleTeamResult {
 	public static final Integer[] GAME_RESULTS = {-1,0,1};
 	
 	/**
-	 * Map of all the possible results of a single team according to the number of teams
-	 * 
-	 * For instance, if number of teams is 4 then the number of possible results for a team is 10:
-	 * {-1,-1,-1},{-1,-1,0},{-1,-1,1} and so on
-	 */
-	private Map<Integer,Integer[][]> singleTeamResultsByGroupSize = new HashMap<>();
-	
-	private static final SingleTeamResult instance = new SingleTeamResult();
-	
+     * Don't let anyone instantiate this class.
+     */
 	private SingleTeamResult(){}
 	
-	public Integer[][] getSingleTeamResults(int numTeams){
-		
-		Integer[][] singleTeamResults = singleTeamResultsByGroupSize.get(numTeams);
-		if(singleTeamResults==null){
-			singleTeamResults = calculateSingleTeamResults(numTeams);
-			singleTeamResultsByGroupSize.put(numTeams, singleTeamResults);
-			return MatrixUtil.deepCopy(singleTeamResults);
-		}
-		else
-			return MatrixUtil.deepCopy(singleTeamResults);
-	}
-	
-	private Integer[][] calculateSingleTeamResults(int numTeams) {
+	public static Integer[][] calculateSingleTeamResults(int numTeams) {
 		
 		ICombinatoricsVector<Integer> originalVector = Factory.createVector(GAME_RESULTS);
 		Generator<Integer> generator = Factory.createMultiCombinationGenerator(originalVector, numTeams-1);
@@ -51,13 +30,9 @@ public final class SingleTeamResult {
 		Integer[][] teamResults = new Integer[(int) generator.getNumberOfGeneratedObjects()][numTeams-1];		
 		int j = 0;
 		for(ICombinatoricsVector<Integer> comb : generator)
-			teamResults[j++] = MatrixUtil.convertListToArray(comb.getVector());					
+			teamResults[j++] = IntegerMatrix.convertListToArray(comb.getVector());					
 		
 		return teamResults;
-	}
-
-	public static SingleTeamResult getInstance() {
-		return instance;
 	}
 
 }

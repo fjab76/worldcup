@@ -5,7 +5,7 @@ import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Test;
 
-import fjab.worldcup.util.MatrixUtil;
+import fjab.worldcup.util.IntegerMatrix;
 
 
 public class MatrixUtilTest {
@@ -17,7 +17,7 @@ public class MatrixUtilTest {
 		int[][] matrix = {{0,0},{1,1},{2,2},{3,3},{4,4}};
 		
 		//when
-		MatrixUtil.moveElementFromTo(matrix, 1, 3);
+		IntegerMatrix.moveElementFromTo(matrix, 1, 3);
 		
 		//then		
 		Assert.assertTrue(Arrays.equals(new int[]{0,0},matrix[0]));
@@ -34,7 +34,7 @@ public class MatrixUtilTest {
 		Integer[] matrix = {0,1,2,3,4};		
 		
 		//when
-		MatrixUtil.moveElementFromTo(matrix, 1, 3);
+		IntegerMatrix.moveElementFromTo(matrix, 1, 3);
 		
 		//then		
 		Assert.assertEquals(0,matrix[0].intValue());
@@ -52,7 +52,7 @@ public class MatrixUtilTest {
 		Integer[] arrayToBeMatched = {1,5,2,3,4};
 		
 		//when
-		Integer[] resultingArray = MatrixUtil.matchArrays(reference, arrayToBeMatched);
+		Integer[] resultingArray = IntegerMatrix.matchArrays(reference, arrayToBeMatched);
 		
 		//then
 		Assert.assertArrayEquals(new Integer[]{5,1,3,2,4}, resultingArray);		
@@ -66,7 +66,7 @@ public class MatrixUtilTest {
 		Integer[] arrayToBeMatched = {1,2,3,4,7};
 		
 		//when
-		Integer[] resultingArray = MatrixUtil.matchArrays(reference, arrayToBeMatched);
+		Integer[] resultingArray = IntegerMatrix.matchArrays(reference, arrayToBeMatched);
 		
 		//then
 		Assert.assertArrayEquals(null, resultingArray);		
@@ -80,7 +80,7 @@ public class MatrixUtilTest {
 		Integer[] arrayToBeMatched = {0,2,3,4,1};
 		
 		//when
-		Integer[] resultingArray = MatrixUtil.matchArrays(reference, arrayToBeMatched);
+		Integer[] resultingArray = IntegerMatrix.matchArrays(reference, arrayToBeMatched);
 		
 		//then
 		Assert.assertArrayEquals(new Integer[]{1,3,2,0,4}, resultingArray);		
@@ -94,7 +94,7 @@ public class MatrixUtilTest {
 		Integer[] arrayToBeMatched = {-1,-1,1};
 		
 		//when
-		Integer[] resultingArray = MatrixUtil.matchArrays(reference, arrayToBeMatched);
+		Integer[] resultingArray = IntegerMatrix.matchArrays(reference, arrayToBeMatched);
 		
 		//then
 		Assert.assertArrayEquals(null, resultingArray);		

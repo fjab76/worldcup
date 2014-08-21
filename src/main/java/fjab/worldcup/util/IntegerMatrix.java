@@ -7,19 +7,37 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class MatrixUtil {
+/**
+ * Utility class with operations on a bidimensional array of Integers
+ */
+public class IntegerMatrix {
 	
-	public static int findScarcestElement(Integer[][] matrix){
+	/**
+	 * Do not let any client create an instance
+	 */
+	private IntegerMatrix(){}
+	
+	/**
+	 * Returns the element of matrix with the least number of occurrences
+	 * @param matrix Bidimensional array of Integers
+	 * @return Integer The element of matrix with the least number of occurrences
+	 */
+	public static Integer findScarcestElement(Integer[][] matrix){
 		
 		Map<Integer,List<Integer>> map = groupElements(matrix);
 		
 		//The initial value of the reduce function may be any value of matrix
 		return map.keySet().stream()
-		                   .reduce(matrix[0][0], (result,element) -> {if(map.get(element).size()<map.get(result).size()) result = element;return result;})
-		                   .intValue();
+		                   .reduce(matrix[0][0], (result,element) -> {if(map.get(element).size()<map.get(result).size()) result = element;return result;});
 		
 	}
 	
+	/**
+	 * Groups the occurrences of the same type: all the elements with the same value are added to a list and mapped to said value
+	 * 
+	 * @param matrix Bidimensional array of Integers whose elements are to be grouped
+	 * @return Map<Integer,List<Integer>> Map of each different element in matrix to a list of all the elements with the same value
+	 */
 	public static Map<Integer,List<Integer>> groupElements(Integer[][] matrix){
 		
 		return Arrays.stream(matrix)
@@ -27,7 +45,14 @@ public class MatrixUtil {
 				  .collect(Collectors.groupingBy(Integer::intValue));		
 	}
 	
-	public static int indexOfFirstColumnWithElement(Integer[][] matrix, int element){
+	/**
+	 * Given a bidimensional array of Integers, this method returns the index of the first column that contains element
+	 * 
+	 * @param matrix Bidimensional array of Integers
+	 * @param element Element of matrix to be searched
+	 * @return int Index of the first column that contains element. If the element is not in matrix, returns -1
+	 */
+	public static int indexOfFirstColumnWithElement(Integer[][] matrix, Integer element){
 		
 		return IntStream.range(0, matrix.length)
 		         .filter(x -> Stream.of(matrix[x]).filter(y -> y==element).count()>0)
@@ -49,17 +74,22 @@ public class MatrixUtil {
 		return combination;
 	}
 	
-	public static Integer[][] convertListIntegersToArray(List<Integer[]> list){
+	/**
+	 * Copies the elements of a list of arrays into a matrix (bidimensional array)
+	 * @param original Bidimensional array to be copied
+	 * @return Integer[][] New bidimensional array containing a copy of each element in the list
+	 */
+	public static Integer[][] copyListArraysToMatrix(List<Integer[]> list){
 		
-		Integer[][] combination = new Integer[list.size()][];
+		Integer[][] matrix = new Integer[list.size()][];
 		
 		for(int j=0; j<list.size(); j++){
-			combination[j] = new Integer[list.get(j).length];
+			matrix[j] = new Integer[list.get(j).length];
 			for(int k=0; k<list.get(j).length; k++)
-				combination[j][k] = list.get(j)[k];
+				matrix[j][k] = list.get(j)[k];
 		}
 			
-		return combination;
+		return matrix;
 	}
 	
 	
@@ -215,6 +245,11 @@ public class MatrixUtil {
 		return numNulls;
 	}
 	
+	/**
+	 * Copies the elements of the argument passed in into a new object
+	 * @param original Bidimensional array of Integers to be copied
+	 * @return Integer[][] New bidimensional array containing a copy of each element of original
+	 */
 	public static Integer[][] deepCopy(Integer[][] original){
 		
 		Integer[][] copy = new Integer[original.length][];

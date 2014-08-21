@@ -14,7 +14,7 @@ import org.paukov.combinatorics.ICombinatoricsVector;
 
 import fjab.worldcup.api.Group;
 import fjab.worldcup.api.GroupResult;
-import fjab.worldcup.util.MatrixUtil;
+import fjab.worldcup.util.IntegerMatrix;
 
 /**
  * This implementation is based on the use of combinatorial methods. The results of a game are represented by GAME_RESULT:
@@ -65,12 +65,12 @@ public class CombinatorialImpl implements Group {
 		//combinations is 715
 		//All the invalid combinations must be taken away from the total number of possible combinations.
 		
-		ICombinatoricsVector<int[]> originalVector = Factory.createVector(MatrixUtil.convertIntegerToIntMatrix(GroupResult.getSingleTeamResults(numTeamsPerGroup)));
+		ICombinatoricsVector<int[]> originalVector = Factory.createVector(IntegerMatrix.convertIntegerToIntMatrix(GroupResult.getSingleTeamResults(numTeamsPerGroup)));
 		Generator<int[]> generator = Factory.createMultiCombinationGenerator(originalVector, numTeamsPerGroup);
 		
 		Set<GroupResult> groupResultCombinationsFiltered = generator.generateAllObjects().stream()
 				  .map(ICombinatoricsVector::getVector)
-				  .map(x -> MatrixUtil.convertToArray(x))
+				  .map(x -> IntegerMatrix.convertToArray(x))
 				  .filter(this::checkMatrix)
 				  .filter(x -> this.isValidCombination(x))
 				  .map(x -> new GroupResult(x))
@@ -124,7 +124,7 @@ public class CombinatorialImpl implements Group {
 		
 		//The number of 0s must be even
 		//The number of 1s must be equal to the number of -1s
-		Map<Integer,List<Integer>> map = MatrixUtil.groupElements(combination);		
+		Map<Integer,List<Integer>> map = IntegerMatrix.groupElements(combination);		
 		int num0s = map.get(Integer.valueOf(0))!=null?map.get(Integer.valueOf(0)).size():0;	
 		int num1s = map.get(Integer.valueOf(1))!=null?map.get(Integer.valueOf(1)).size():0;
 		int numMinus1s = map.get(Integer.valueOf(-1))!=null?map.get(Integer.valueOf(-1)).size():0;
@@ -170,7 +170,7 @@ public class CombinatorialImpl implements Group {
 			if(columnIndex==-1) return false;
 			
 			sortArrayByInducedOrder(combination[columnIndex],searchedValue);
-			MatrixUtil.moveElementFromTo(combination, columnIndex, columnIndexUpperLimit);
+			IntegerMatrix.moveElementFromTo(combination, columnIndex, columnIndexUpperLimit);
 		}
 		
 		Integer[][] trimmedCombination = trimMatrix(combination);
@@ -225,9 +225,9 @@ public class CombinatorialImpl implements Group {
 
 	private void sortArray(Integer[][] matrix) {
 		
-		int scarcestElement = MatrixUtil.findScarcestElement(matrix);
-		int index = MatrixUtil.indexOfFirstColumnWithElement(matrix, scarcestElement);
-		MatrixUtil.moveElementFromTo(matrix, index, 0);
+		int scarcestElement = IntegerMatrix.findScarcestElement(matrix);
+		int index = IntegerMatrix.indexOfFirstColumnWithElement(matrix, scarcestElement);
+		IntegerMatrix.moveElementFromTo(matrix, index, 0);
 		sortArrayByInducedOrder(matrix[0], scarcestElement);
 		
 	}

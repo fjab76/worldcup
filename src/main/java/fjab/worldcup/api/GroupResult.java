@@ -3,13 +3,14 @@ package fjab.worldcup.api;
 import static fjab.worldcup.api.SingleTeamResult.GAME_RESULTS;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import fjab.worldcup.util.MatrixUtil;
+import fjab.worldcup.util.IntegerMatrix;
 
 /**
  * Immutable object representing the result of a group. 
@@ -32,9 +33,17 @@ import fjab.worldcup.util.MatrixUtil;
  */
 public final class GroupResult {
 	
-	private SingleTeamResult singleTeamResult = SingleTeamResult.getInstance();
-	
 	private final int[][] results;
+	
+	/**
+	 * Map of all the possible results of a single team according to the number of teams
+	 * 
+	 * For instance, if number of teams is 4 then the number of possible results for a team is 10:
+	 * {-1,-1,-1},{-1,-1,0},{-1,-1,1} and so on
+	 * 
+	 * These values are calculated as they are needed (lazy initialization) and cached for better performance
+	 */
+	private static Map<Integer,Integer[][]> singleTeamResultsByGroupSize = new HashMap<>();
 
 
 	// private final int[] points;
@@ -67,7 +76,7 @@ public final class GroupResult {
 		}
 
 		// normalising the order of the teams in ascending order
-		int[][] singleTeamResults = MatrixUtil.convertIntegerToIntMatrix(singleTeamResult.getSingleTeamResults(numTeams));
+		int[][] singleTeamResults = IntegerMatrix.convertIntegerToIntMatrix(getSingleTeamResults(numTeams));
 		Arrays.sort(results, (o1, o2) -> indexOfElement(o1, singleTeamResults) - indexOfElement(o2, singleTeamResults));
 	}
 
@@ -139,7 +148,7 @@ public final class GroupResult {
 		
 		//The number of 0s must be even
 		//The number of 1s must be equal to the number of -1s
-		Map<Integer,List<Integer>> map = MatrixUtil.groupElements(matrix);		
+		Map<Integer,List<Integer>> map = IntegerMatrix.groupElements(matrix);		
 		int num0s = map.get(GAME_RESULTS[1])!=null?map.get(GAME_RESULTS[1]).size():0;	
 		int num1s = map.get(GAME_RESULTS[2])!=null?map.get(GAME_RESULTS[2]).size():0;
 		int numMinus1s = map.get(GAME_RESULTS[0])!=null?map.get(GAME_RESULTS[0]).size():0;
@@ -155,6 +164,18 @@ public final class GroupResult {
 	public static boolean checkArrayDimensions(Integer[][] matrix){
 		
 		return Stream.of(matrix).filter(x -> x.length!=matrix.length-1).count()==0;
+	}
+	
+	public Integer[][] getSingleTeamResults(int numTeams){
+		
+		Integer[][] singleTeamResults = singleTeamResultsByGroupSize.get(numTeams);
+		if(singleTeamResults==null){
+			singleTeamResults = SingleTeamResult.calculateSingleTeamResults(numTeams);
+			singleTeamResultsByGroupSize.put(numTeams, singleTeamResults);
+			return IntegerMatrix.deepCopy(singleTeamResults);
+		}
+		else
+			return IntegerMatrix.deepCopy(singleTeamResults);
 	}
 
 }

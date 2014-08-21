@@ -11,7 +11,7 @@ import org.paukov.combinatorics.Factory;
 import org.paukov.combinatorics.Generator;
 import org.paukov.combinatorics.ICombinatoricsVector;
 
-import fjab.worldcup.util.MatrixUtil;
+import fjab.worldcup.util.IntegerMatrix;
 
 public class CommonHelper {
 	
@@ -32,7 +32,7 @@ public class CommonHelper {
 		
 		//The number of 0s must be even
 		//The number of 1s must be equal to the number of -1s
-		Map<Integer,List<Integer>> map = MatrixUtil.groupElements(matrix);		
+		Map<Integer,List<Integer>> map = IntegerMatrix.groupElements(matrix);		
 		int num0s = map.get(GAME_RESULTS[1])!=null?map.get(GAME_RESULTS[1]).size():0;	
 		int num1s = map.get(GAME_RESULTS[2])!=null?map.get(GAME_RESULTS[2]).size():0;
 		int numMinus1s = map.get(GAME_RESULTS[0])!=null?map.get(GAME_RESULTS[0]).size():0;
@@ -59,7 +59,7 @@ public class CommonHelper {
 		Integer[][] teamResults = new Integer[(int) generator.getNumberOfGeneratedObjects()][numTeams-1];		
 		int j = 0;
 		for(ICombinatoricsVector<Integer> comb : generator)
-			teamResults[j++] = MatrixUtil.convertListToArray(comb.getVector());					
+			teamResults[j++] = IntegerMatrix.convertListToArray(comb.getVector());					
 		
 		return teamResults;
 	}

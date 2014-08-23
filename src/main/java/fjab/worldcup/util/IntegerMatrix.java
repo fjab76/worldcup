@@ -157,92 +157,50 @@ public class IntegerMatrix {
 		});
 	}
 	
-	public static Integer[] matchArrays(Integer[] reference, Integer[] arrayToBeMatchedOriginal){
+	/**
+	 * Concatenates array1 and array2
+	 * @param array1 Array of Integers
+	 * @param array2 Array of Integers
+	 * @return Integer[] New array of Integers containing the elements of array1 plus the elements of array2
+	 */
+	public static Integer[] concatArrays(Integer[] array1, Integer[] array2) {
 		
-		if(reference.length!=arrayToBeMatchedOriginal.length)
-			return null;
-		
-		Integer[] arrayToBeMatched = Arrays.copyOf(arrayToBeMatchedOriginal, arrayToBeMatchedOriginal.length);		
-		
-		Integer[] arrayWithoutNullsOriginal = removeNullElements(reference);
-		Integer[] arrayWithoutNulls = Arrays.copyOf(arrayWithoutNullsOriginal, arrayWithoutNullsOriginal.length);
-
-		Arrays.sort(arrayWithoutNulls);
-		Arrays.sort(arrayToBeMatched);
-		
-		if(arrayWithoutNulls.length==arrayToBeMatched.length){
-			return Arrays.equals(arrayWithoutNulls, arrayToBeMatched)?reference:null;			
-		}
-		
-		//Searching for a match
-
-		int initialMatchingIndex = -1;
-		int finalMatchingIndex = -1;
-		for(int j=0,i=0; j<arrayToBeMatched.length && i<arrayWithoutNulls.length; j++){
-
-			if(arrayToBeMatched[j].equals(arrayWithoutNulls[i])){
-				i++;
-				if(initialMatchingIndex==-1)
-					initialMatchingIndex = j;
-				finalMatchingIndex = j;
-			}
-			else if(!arrayToBeMatched[j].equals(arrayWithoutNulls[i]) && i>0){
-				return null;
-			}
-		}
-		
-		if(initialMatchingIndex==-1 || finalMatchingIndex-initialMatchingIndex!=arrayWithoutNulls.length-1)
-			return null;
-		else{
-			Integer[] preArray = Arrays.copyOfRange(arrayToBeMatched, 0, initialMatchingIndex);
-			Integer[] postArray = Arrays.copyOfRange(arrayToBeMatched, finalMatchingIndex+1, arrayToBeMatched.length);
-			Integer[] combinedArray = concatArrays(preArray,postArray);
-			Arrays.sort(combinedArray);
-			return concatArrays(arrayWithoutNullsOriginal,combinedArray);
-		}		
-	}
-
-	public static Integer[] concatArrays(Integer[] preArray, Integer[] postArray) {
-		
-		Integer[] result = new Integer[preArray.length+postArray.length];
-		System.arraycopy(preArray, 0, result, 0, preArray.length);
-		System.arraycopy(postArray, 0, result, preArray.length, postArray.length);
+		Integer[] result = new Integer[array1.length+array2.length];
+		System.arraycopy(array1, 0, result, 0, array1.length);
+		System.arraycopy(array2, 0, result, array1.length, array2.length);
 		
 		return result;
 	}
 
 	/**
 	 * Returns a new array with no null elements
-	 * @param reference Array of Integers with null values
+	 * @param array Array of Integers with null values
 	 * @return Integer[] New array of Integers with no null values. If the original array contains x
 	 * null values, the new array dimension is reference.length-x. If the original array does not contain
 	 * null values, the new array returned contains the same values as the original one.
 	 */
-	public static Integer[] removeNullElements(Integer[] reference) {
+	public static Integer[] removeNullElements(Integer[] array) {
 		
-		int numNulls = countNumberOfNulls(reference);
+		int numNulls = countNumberOfNulls(array);
 		if(numNulls==0)
-			return Arrays.copyOf(reference, reference.length);
+			return Arrays.copyOf(array, array.length);
 		
-		Integer[] newArray = new Integer[reference.length-numNulls];
+		Integer[] newArray = new Integer[array.length-numNulls];
 
 		int k = 0;
-		for(int j=0; j<reference.length; j++)
-			if(reference[j]!=null)
-				newArray[k++] = reference[j];
+		for(int j=0; j<array.length; j++)
+			if(array[j]!=null)
+				newArray[k++] = array[j];
 		
 		return newArray;
 	}
 	
-	public static int countNumberOfNulls(Integer[] reference) {
+	
+	public static int countNumberOfNulls(Integer[] array) {
 		
-		int numNulls = 0;
-		
-		for(int j=0; j<reference.length; j++)
-			if(reference[j]==null)
-				numNulls++;
-		
-		return numNulls;
+		return (int) Arrays.stream(array)
+			  .filter(x -> x==null)
+			  .count();
 	}
 	
 	/**

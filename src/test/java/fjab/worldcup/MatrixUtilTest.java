@@ -52,7 +52,7 @@ public class MatrixUtilTest {
 		Integer[] arrayToBeMatched = {1,5,2,3,4};
 		
 		//when
-		Integer[] resultingArray = IntegerMatrix.matchArrays(reference, arrayToBeMatched);
+		Integer[] resultingArray = SolutionByConstruction.matchArrays(reference, arrayToBeMatched);
 		
 		//then
 		Assert.assertArrayEquals(new Integer[]{5,1,3,2,4}, resultingArray);		
@@ -66,7 +66,7 @@ public class MatrixUtilTest {
 		Integer[] arrayToBeMatched = {1,2,3,4,7};
 		
 		//when
-		Integer[] resultingArray = IntegerMatrix.matchArrays(reference, arrayToBeMatched);
+		Integer[] resultingArray = SolutionByConstruction.matchArrays(reference, arrayToBeMatched);
 		
 		//then
 		Assert.assertArrayEquals(null, resultingArray);		
@@ -80,7 +80,7 @@ public class MatrixUtilTest {
 		Integer[] arrayToBeMatched = {0,2,3,4,1};
 		
 		//when
-		Integer[] resultingArray = IntegerMatrix.matchArrays(reference, arrayToBeMatched);
+		Integer[] resultingArray = SolutionByConstruction.matchArrays(reference, arrayToBeMatched);
 		
 		//then
 		Assert.assertArrayEquals(new Integer[]{1,3,2,0,4}, resultingArray);		
@@ -94,7 +94,7 @@ public class MatrixUtilTest {
 		Integer[] arrayToBeMatched = {-1,-1,1};
 		
 		//when
-		Integer[] resultingArray = IntegerMatrix.matchArrays(reference, arrayToBeMatched);
+		Integer[] resultingArray = SolutionByConstruction.matchArrays(reference, arrayToBeMatched);
 		
 		//then
 		Assert.assertArrayEquals(null, resultingArray);		

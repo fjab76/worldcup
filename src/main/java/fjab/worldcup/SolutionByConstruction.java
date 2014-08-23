@@ -50,7 +50,7 @@ public class SolutionByConstruction implements GroupResultCalculator {
 			if(team==0)
 				teamResults = Arrays.copyOf(singleTeamResults[k], singleTeamResults[k].length);
 			else
-				teamResults = IntegerMatrix.matchArrays(groupResult[team], singleTeamResults[k]);
+				teamResults = checkCompatibility(groupResult[team], singleTeamResults[k]);
 			
 			if(teamResults!=null){
 				groupResult[team] = teamResults;
@@ -93,10 +93,75 @@ public class SolutionByConstruction implements GroupResultCalculator {
 		int upperLimit = (int) generator.generateAllObjects().stream()
 				  .map(ICombinatoricsVector::getVector)
 				  .map(x -> IntegerMatrix.copyListArraysToMatrix(x))
-				  .filter(x -> GroupResult.checkElements(x))
+				  .filter(x -> GroupResult.checkElementsIdentity(x))
+				  .filter(x -> GroupResult.checkElementsBalance(x))
 				  .count();
 		
 		return upperLimit;
+	}
+
+	/**
+	 * Checks whether the values of groupResult induced by other team's results are compatible with the values of singleTeamResult
+	 * groupResult only contains the values induced by other team's results while the rest of the values are null. singleTeamResult
+	 * is compatible with groupResult if the former contains the same values as the latter (excluding the null values)
+	 * If the arrays are compatible, a new array is returned containing in first place the common elements and then the remaining
+	 * elements of singleTeamResult. Else, null is returned.
+	 * 
+	 * @param groupResult Array of Integers representing the results of a team induced by other team's results. The rest of the elements
+	 * are null
+	 * @param singleTeamResult Array of Integers representing one of the possible combinations of results of a team without considering
+	 * other team's results
+	 * @return New array of Integers representing the results of a team in the group. The results induced by other teams
+	 * come first in the same order as in groupResult. If groupResult and singleTeamResult are incompatible, null is returned
+	 */
+	private Integer[] checkCompatibility(Integer[] groupResult, Integer[] singleTeamResult){
+		
+		if(groupResult.length!=singleTeamResult.length)
+			return null;
+		
+		//Defensive copy of singleTeamResult to manipulate its elements without altering the original array
+		Integer[] singleTeamResultCopy = Arrays.copyOf(singleTeamResult, singleTeamResult.length);		
+		
+		//Copy of groupResult with no nulls
+		Integer[] groupResultWithNoNulls = IntegerMatrix.removeNullElements(groupResult);
+		
+		//Defensive copy of groupResultWithNoNulls used to manipulate its elements without altering the original array  
+		Integer[] groupResultWithNoNullsCopy = Arrays.copyOf(groupResultWithNoNulls, groupResultWithNoNulls.length);
+	
+		//Sorting both arrays to make it possible to compare one to another
+		Arrays.sort(groupResultWithNoNullsCopy);
+		Arrays.sort(singleTeamResultCopy);
+		
+		if(groupResultWithNoNullsCopy.length==singleTeamResultCopy.length){
+			return Arrays.equals(groupResultWithNoNullsCopy, singleTeamResultCopy)?Arrays.copyOf(groupResult, groupResult.length):null;			
+		}
+		
+		//Searching for a match
+		int initialMatchingIndex = -1;
+		int finalMatchingIndex = -1;
+		for(int j=0,i=0; j<singleTeamResultCopy.length && i<groupResultWithNoNullsCopy.length; j++){
+	
+			if(singleTeamResultCopy[j].equals(groupResultWithNoNullsCopy[i])){
+				i++;
+				if(initialMatchingIndex==-1)
+					initialMatchingIndex = j;
+				finalMatchingIndex = j;
+			}
+			else if(!singleTeamResultCopy[j].equals(groupResultWithNoNullsCopy[i]) && i>0){
+				return null;
+			}
+		}
+		
+		if(initialMatchingIndex==-1 || finalMatchingIndex-initialMatchingIndex!=groupResultWithNoNullsCopy.length-1)
+			return null;
+		else{
+			//Composing the array to return
+			Integer[] preMatch = Arrays.copyOfRange(singleTeamResultCopy, 0, initialMatchingIndex);
+			Integer[] postMatch = Arrays.copyOfRange(singleTeamResultCopy, finalMatchingIndex+1, singleTeamResultCopy.length);
+			Integer[] nonMatchedElements = IntegerMatrix.concatArrays(preMatch,postMatch);
+			return IntegerMatrix.concatArrays(groupResultWithNoNulls,nonMatchedElements);
+			
+		}		
 	}
 	
 	

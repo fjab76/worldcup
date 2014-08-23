@@ -48,10 +48,22 @@ public final class GroupResult {
 
 	// private final int[] points;
 
+	/**
+	 * When an object is created, the following actions are carried out to make sure that a valid object is created:
+	 * 1.validaton of the array dimensions
+	 * 2.validation of the identity of the elements (the only values allowed are -1,0,1)
+	 * 3.validation of the element balance (the first of the two constraints specified above)
+	 * 4.normalisation of the elements in the array by sorting the columns and the elements in the columns as specified above)
+	 * @param groupResult
+	 */
 	public GroupResult(Integer[][] groupResult) {
 		
-		if(!checkElements(groupResult)){
+		if(!checkElementsIdentity(groupResult)){
 			throw new IllegalArgumentException("The only elements allowed in the array are 1,0 and -1");
+		}
+		
+		if(!checkElementsBalance(groupResult)){
+			throw new IllegalArgumentException("The balance of elements is wrong");
 		}
 		
 		if(!checkArrayDimensions(groupResult)){
@@ -139,12 +151,37 @@ public final class GroupResult {
 	 * @param matrix Bidimensional array of Integers to be checked
 	 * @return boolean True if the matrix complies with all the rules. False otherwise.
 	 */
-	public static boolean checkElements(Integer[][] matrix){
+	/*public static boolean checkElements(Integer[][] matrix){
 
 		//All elements must be one of these values: -1,0,1
 		if(Stream.of(matrix).flatMap(x -> Stream.of(x)).filter(x -> (Arrays.binarySearch(GAME_RESULTS, x)==-1)).count()!=0){
 			return false;
 		}
+		
+		//The number of 0s must be even
+		//The number of 1s must be equal to the number of -1s
+		Map<Integer,List<Integer>> map = IntegerMatrix.groupElements(matrix);		
+		int num0s = map.get(GAME_RESULTS[1])!=null?map.get(GAME_RESULTS[1]).size():0;	
+		int num1s = map.get(GAME_RESULTS[2])!=null?map.get(GAME_RESULTS[2]).size():0;
+		int numMinus1s = map.get(GAME_RESULTS[0])!=null?map.get(GAME_RESULTS[0]).size():0;
+		
+		if(!(num0s/2*2==num0s && num1s==numMinus1s)){
+			throw new IllegalArgumentException("The balance of elements in the array is wrong");
+		}
+		
+		return true;
+	}*/
+	
+	public static boolean checkElementsIdentity(Integer[][] matrix){
+		
+		//All elements must be one of these values: -1,0,1
+		return Stream.of(matrix)
+		      .flatMap(x -> Stream.of(x))
+		      .filter(x -> (Arrays.binarySearch(GAME_RESULTS, x)==-1))
+		      .count()==0;
+	}
+	
+	public static boolean checkElementsBalance(Integer[][] matrix){
 		
 		//The number of 0s must be even
 		//The number of 1s must be equal to the number of -1s

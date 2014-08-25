@@ -9,9 +9,30 @@ import java.util.stream.Stream;
 
 public class MatrixUtil {
 	
-	public static int findScarcestElement(Integer[][] matrix){
+	public static Integer findScarcestElement(Integer[][] matrix, boolean strictMode){
 		
 		Map<Integer,List<Integer>> map = groupElements(matrix);
+		
+		if(strictMode){
+			//Checking if there are elements with the same maximum frequency
+			
+			int[] numElementsArray = map.values().stream()
+									.mapToInt(x -> x.size())
+									.toArray();		
+			
+			int max = numElementsArray[0];
+			for(int j=1; j<numElementsArray.length; j++){
+				
+				int numElements = (Integer) numElementsArray[j];
+				if(numElements>max)
+					max = numElements;
+				else if(numElements==max){
+					//There is no strict maximum
+					return null;
+				}
+					
+			}
+		}
 		
 		//The initial value of the reduce function may be any value of matrix
 		return map.keySet().stream()
@@ -20,10 +41,27 @@ public class MatrixUtil {
 		
 	}
 	
+	public static int findMostFrequentElement(Integer[][] matrix){
+		
+		Map<Integer,List<Integer>> map = groupElements(matrix);
+		
+		//The initial value of the reduce function may be any value of matrix
+		return map.keySet().stream()
+		                   .reduce(matrix[0][0], (result,element) -> {if(map.get(element).size()>map.get(result).size()) result = element;return result;})
+		                   .intValue();
+		
+	}
+	
 	public static Map<Integer,List<Integer>> groupElements(Integer[][] matrix){
 		
 		return Arrays.stream(matrix)
 				  .flatMap(x -> Arrays.stream(x))
+				  .collect(Collectors.groupingBy(Integer::intValue));		
+	}
+	
+	public static Map<Integer,List<Integer>> groupElements(Integer[] matrix){
+		
+		return Arrays.stream(matrix)
 				  .collect(Collectors.groupingBy(Integer::intValue));		
 	}
 	
@@ -84,6 +122,31 @@ public class MatrixUtil {
 	public static Integer[][] convertIntToIntegerMatrix(int[][] matrix){
 		
 		return (Integer[][]) Stream.of(matrix).map(x -> IntStream.of(x).boxed()).toArray();
+	}
+	
+	public static Integer findMostBalancedColumn(Integer[][] matrix){		
+		
+		//grouping different elements of each column
+		List<Map<Integer, List<Integer>>> list = Arrays.stream(matrix)
+											      .map(x -> groupElements(x))
+											      .collect(Collectors.toList());
+		
+		//searching the column with the least repeat elements of the same type
+		return IntStream.range(0, list.size()).
+				reduce(0, (result,element) -> {if(getGreatestNumberOfRepetitions(list.get(element)).compareTo(getGreatestNumberOfRepetitions(list.get(result)))==-1) result=element;return result;});
+	}
+	
+	public static Integer getGreatestNumberOfRepetitions(Integer[] array){		
+		
+		return getGreatestNumberOfRepetitions(groupElements(array));
+	}
+	
+	public static Integer getGreatestNumberOfRepetitions(Map<Integer, List<Integer>> map){
+		
+		return map.values().stream()
+					.mapToInt(x -> x.size())
+					.max().getAsInt();
+
 	}
 
 }

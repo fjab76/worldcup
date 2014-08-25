@@ -42,5 +42,18 @@ public class MatrixUtilTest {
 		Assert.assertEquals(4,matrix[4].intValue());
 	}
 	
+	@Test
+	public void mostBalancedColumnIsSecond(){
+		
+		//given
+		Integer[][] matrix = {{-1,-1,1},{-1,0,1},{-1,0,1},{0,0,1}};
+		
+		//when
+		int column = MatrixUtil.findMostBalancedColumn(matrix);
+		
+		//then
+		Assert.assertEquals(1, column);
+	}
+	
 	
 }

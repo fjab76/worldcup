@@ -14,7 +14,6 @@ import org.paukov.combinatorics.ICombinatoricsVector;
 
 import fjab.worldcup.api.Group;
 import fjab.worldcup.api.GroupResult;
-import fjab.worldcup.util.IntegerMatrix;
 
 /**
  * This implementation is based on the use of combinatorial methods. The results of a game are represented by GAME_RESULT:
@@ -65,12 +64,12 @@ public class CombinatorialImpl implements Group {
 		//combinations is 715
 		//All the invalid combinations must be taken away from the total number of possible combinations.
 		
-		ICombinatoricsVector<int[]> originalVector = Factory.createVector(IntegerMatrix.convertIntegerToIntMatrix(GroupResult.getSingleTeamResults(numTeamsPerGroup)));
+		ICombinatoricsVector<int[]> originalVector = Factory.createVector(individualResultCombinations);
 		Generator<int[]> generator = Factory.createMultiCombinationGenerator(originalVector, numTeamsPerGroup);
 		
 		Set<GroupResult> groupResultCombinationsFiltered = generator.generateAllObjects().stream()
 				  .map(ICombinatoricsVector::getVector)
-				  .map(x -> IntegerMatrix.convertToArray(x))
+				  .map(x -> MatrixUtil.convertToArray(x))
 				  .filter(this::checkMatrix)
 				  .filter(x -> this.isValidCombination(x))
 				  .map(x -> new GroupResult(x))
@@ -124,7 +123,7 @@ public class CombinatorialImpl implements Group {
 		
 		//The number of 0s must be even
 		//The number of 1s must be equal to the number of -1s
-		Map<Integer,List<Integer>> map = IntegerMatrix.groupElements(combination);		
+		Map<Integer,List<Integer>> map = MatrixUtil.groupElements(combination);		
 		int num0s = map.get(Integer.valueOf(0))!=null?map.get(Integer.valueOf(0)).size():0;	
 		int num1s = map.get(Integer.valueOf(1))!=null?map.get(Integer.valueOf(1)).size():0;
 		int numMinus1s = map.get(Integer.valueOf(-1))!=null?map.get(Integer.valueOf(-1)).size():0;
@@ -157,6 +156,14 @@ public class CombinatorialImpl implements Group {
 			combination[j] = Arrays.copyOf(originalCombination[j], originalCombination[j].length);
 		}
 		
+		//{-1,-1,1},{-1,0,1},{-1,0,1},{0,0,1}
+		if(originalCombination.length==4 && originalCombination[0][0].intValue()==-1 && originalCombination[0][1].intValue()==-1 && originalCombination[0][2].intValue()==0 && 
+		   originalCombination[1][0].intValue()==-1 && originalCombination[1][1].intValue()==0 && originalCombination[1][2].intValue()==1 && 
+		   originalCombination[2][0].intValue()==-1 && originalCombination[2][1].intValue()==1 && originalCombination[2][2].intValue()==1 && 
+		   originalCombination[3][0].intValue()==0 && originalCombination[3][1].intValue()==0 && originalCombination[3][2].intValue()==1){
+			System.out.println("");
+		}
+		
 		sortArray(combination);
 		
 		//Looping over elements of 0-th column
@@ -167,10 +174,12 @@ public class CombinatorialImpl implements Group {
 			int columnIndex = findFirstColumnContainingValue(combination,searchedValue,columnIndexUpperLimit);
 			//As soon as a result in one team fails to find its partner in another team, we can conclude that the combination
 			//is not valid
-			if(columnIndex==-1) return false;
+			if(columnIndex==-1){
+				return false;
+			}
 			
 			sortArrayByInducedOrder(combination[columnIndex],searchedValue);
-			IntegerMatrix.moveElementFromTo(combination, columnIndex, columnIndexUpperLimit);
+			MatrixUtil.moveElementFromTo(combination, columnIndex, columnIndexUpperLimit);
 		}
 		
 		Integer[][] trimmedCombination = trimMatrix(combination);
@@ -178,7 +187,11 @@ public class CombinatorialImpl implements Group {
 			return isValidCombination(trimmedCombination);
 		}
 		else{
-			return combination[0][0].equals(-combination[1][0]);
+			boolean result = combination[0][0].equals(-combination[1][0]);
+			if(!result){
+				System.out.println("");
+			}
+			return result;
 		}				
 	}
 
@@ -205,10 +218,10 @@ public class CombinatorialImpl implements Group {
 	private int findFirstColumnContainingValue(Integer[][] combination, int searchedValue, int columnIndexUpperLimit) {		
 		
 		int[] searchedValueOccurrences = IntStream.range(1, columnIndexUpperLimit+1)
-        .map(x -> (int)Stream.of(combination[x])
-       		            .filter(y -> y.equals(searchedValue))
-       		            .count())
-        .toArray();
+								        .map(x -> (int)Stream.of(combination[x])
+								       		            .filter(y -> y.equals(searchedValue))
+								       		            .count())
+								        .toArray();
 		
 		int maxPosition = IntStream.range(0, searchedValueOccurrences.length)
 		.reduce(0, (maximumPosition,element) -> {if(searchedValueOccurrences[element]>searchedValueOccurrences[maximumPosition]) maximumPosition=element;return maximumPosition;});
@@ -225,10 +238,31 @@ public class CombinatorialImpl implements Group {
 
 	private void sortArray(Integer[][] matrix) {
 		
-		int scarcestElement = IntegerMatrix.findScarcestElement(matrix);
-		int index = IntegerMatrix.indexOfFirstColumnWithElement(matrix, scarcestElement);
-		IntegerMatrix.moveElementFromTo(matrix, index, 0);
+		Integer scarcestElement = MatrixUtil.findScarcestElement(replaceMinus1By1(matrix), true);
+		int index;
+		if(scarcestElement==null){
+			
+			Arrays.sort(matrix, (x,y) -> MatrixUtil.getGreatestNumberOfRepetitions(x).compareTo(MatrixUtil.getGreatestNumberOfRepetitions(y)));
+			
+			//index = MatrixUtil.findMostBalancedColumn(matrix);	
+			scarcestElement = MatrixUtil.findScarcestElement(replaceMinus1By1(matrix), false);
+		}
+		else{
+			index = MatrixUtil.indexOfFirstColumnWithElement(matrix, scarcestElement);
+			MatrixUtil.moveElementFromTo(matrix, index, 0);
+		}
+		
+		
 		sortArrayByInducedOrder(matrix[0], scarcestElement);
+		
+	}
+	
+	private void sortArrayByMostFrequentElement(Integer[][] matrix) {
+		
+		int mostFrequentElement = MatrixUtil.findMostFrequentElement(matrix);
+		int index = MatrixUtil.indexOfFirstColumnWithElement(matrix, mostFrequentElement);
+		MatrixUtil.moveElementFromTo(matrix, index, 1);
+		sortArrayByInducedOrder(matrix[0], mostFrequentElement);
 		
 	}
 
@@ -280,7 +314,17 @@ public class CombinatorialImpl implements Group {
 	}
 	
 	
-	
+	private Integer[][] replaceMinus1By1(Integer[][] matrix){
+		
+		Integer[][] replacement = new Integer[matrix.length][];
+		for(int j=0; j<matrix.length; j++){
+			replacement[j] = new Integer[matrix[j].length];
+			for(int k=0; k<matrix[j].length; k++){
+				replacement[j][k] = matrix[j][k]==-1?1:matrix[j][k];
+			}
+		}
+		return replacement;
+	}
 	
 	
 	

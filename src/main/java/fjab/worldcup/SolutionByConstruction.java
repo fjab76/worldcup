@@ -114,7 +114,7 @@ public class SolutionByConstruction implements GroupResultCalculator {
 	 * @return New array of Integers representing the results of a team in the group. The results induced by other teams
 	 * come first in the same order as in groupResult. If groupResult and singleTeamResult are incompatible, null is returned
 	 */
-	private Integer[] checkCompatibility(Integer[] groupResult, Integer[] singleTeamResult){
+	 Integer[] checkCompatibility(Integer[] groupResult, Integer[] singleTeamResult){
 		
 		if(groupResult.length!=singleTeamResult.length)
 			return null;

@@ -1,7 +1,6 @@
 package fjab.worldcup.client;
 
 import fjab.worldcup.SolutionByConstruction;
-import fjab.worldcup.CommonHelper;
 import fjab.worldcup.api.GroupResultCalculator;
 
 public class Client {
@@ -15,7 +14,6 @@ public class Client {
 		}
 		
 		int numTeams = Integer.parseInt(args[0]);
-		builderImpl.setHelper(new CommonHelper());
 		getUpperLimit(builderImpl,numTeams);
 
 	}

@@ -486,5 +486,40 @@ public class CombinatorialImplTest {
 	}
 	
 	
+	/**
+	 * {-1,-1,0},{-1,0,1},{-1,1,1},{0,0,1} is valid
+	 */
+	@Test
+	public void combination39IsValidResult(){
+		
+		//given
+		int numTeamsPerGroup = 4;
+		
+		//when
+		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);		
+		
+		//then
+		GroupResult gr = new GroupResult(new Integer[][] {{-1,-1,0},{-1,0,1},{-1,1,1},{0,0,1}});
+		Assert.assertTrue(setCombinations.contains(gr));
+		
+	}
+	
+	/**
+	 * {-1,-1,1},{-1,0,1},{-1,0,1},{0,0,1} is valid
+	 */
+	@Test
+	public void combination40IsValidResult(){
+		
+		//given
+		int numTeamsPerGroup = 4;
+		
+		//when
+		Set<GroupResult> setCombinations = impl.calculateGroupResults(numTeamsPerGroup);		
+		
+		//then
+		GroupResult gr = new GroupResult(new Integer[][] {{-1,-1,1},{-1,0,1},{-1,0,1},{0,0,1}});
+		Assert.assertTrue(setCombinations.contains(gr));
+		
+	}
 
 }

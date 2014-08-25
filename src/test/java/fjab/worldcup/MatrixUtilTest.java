@@ -52,7 +52,7 @@ public class MatrixUtilTest {
 		Integer[] arrayToBeMatched = {1,5,2,3,4};
 		
 		//when
-		Integer[] resultingArray = SolutionByConstruction.matchArrays(reference, arrayToBeMatched);
+		Integer[] resultingArray = new SolutionByConstruction().checkCompatibility(reference, arrayToBeMatched);
 		
 		//then
 		Assert.assertArrayEquals(new Integer[]{5,1,3,2,4}, resultingArray);		
@@ -66,11 +66,24 @@ public class MatrixUtilTest {
 		Integer[] arrayToBeMatched = {1,2,3,4,7};
 		
 		//when
-		Integer[] resultingArray = SolutionByConstruction.matchArrays(reference, arrayToBeMatched);
+		Integer[] resultingArray = new SolutionByConstruction().checkCompatibility(reference, arrayToBeMatched);
 		
 		//then
 		Assert.assertArrayEquals(null, resultingArray);		
 	}
+	
+	public void mostBalancedColumnIsSecond(){
+		
+		//given
+		Integer[][] matrix = {{-1,-1,1},{-1,0,1},{-1,0,1},{0,0,1}};
+		
+		//when
+		int column = MatrixUtil.findMostBalancedColumn(matrix);
+		
+		//then
+		Assert.assertEquals(1, column);
+	}
+	
 	
 	@Test
 	public void matchPartialArray(){
@@ -80,7 +93,7 @@ public class MatrixUtilTest {
 		Integer[] arrayToBeMatched = {0,2,3,4,1};
 		
 		//when
-		Integer[] resultingArray = SolutionByConstruction.matchArrays(reference, arrayToBeMatched);
+		Integer[] resultingArray = new SolutionByConstruction().checkCompatibility(reference, arrayToBeMatched);
 		
 		//then
 		Assert.assertArrayEquals(new Integer[]{1,3,2,0,4}, resultingArray);		
@@ -94,7 +107,7 @@ public class MatrixUtilTest {
 		Integer[] arrayToBeMatched = {-1,-1,1};
 		
 		//when
-		Integer[] resultingArray = SolutionByConstruction.matchArrays(reference, arrayToBeMatched);
+		Integer[] resultingArray = new SolutionByConstruction().checkCompatibility(reference, arrayToBeMatched);
 		
 		//then
 		Assert.assertArrayEquals(null, resultingArray);		

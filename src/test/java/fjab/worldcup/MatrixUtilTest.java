@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Test;
 
+import fjab.worldcup.util.IntegerArray;
 import fjab.worldcup.util.IntegerMatrix;
 
 
@@ -17,7 +18,7 @@ public class MatrixUtilTest {
 		int[][] matrix = {{0,0},{1,1},{2,2},{3,3},{4,4}};
 		
 		//when
-		IntegerMatrix.moveElementFromTo(matrix, 1, 3);
+		IntegerArray.moveElementFromTo(matrix, 1, 3);
 		
 		//then		
 		Assert.assertTrue(Arrays.equals(new int[]{0,0},matrix[0]));
@@ -34,7 +35,7 @@ public class MatrixUtilTest {
 		Integer[] matrix = {0,1,2,3,4};		
 		
 		//when
-		IntegerMatrix.moveElementFromTo(matrix, 1, 3);
+		IntegerArray.moveElementFromTo(matrix, 1, 3);
 		
 		//then		
 		Assert.assertEquals(0,matrix[0].intValue());
@@ -78,7 +79,7 @@ public class MatrixUtilTest {
 		Integer[][] matrix = {{-1,-1,1},{-1,0,1},{-1,0,1},{0,0,1}};
 		
 		//when
-		int column = MatrixUtil.findMostBalancedColumn(matrix);
+		int column = IntegerMatrix.findMostBalancedColumn(matrix);
 		
 		//then
 		Assert.assertEquals(1, column);

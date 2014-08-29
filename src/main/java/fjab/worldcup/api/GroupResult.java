@@ -1,6 +1,6 @@
 package fjab.worldcup.api;
 
-import static fjab.worldcup.api.SingleTeamResult.GAME_RESULTS;
+import static fjab.worldcup.util.SingleTeamResult.GAME_RESULTS;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,6 +11,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import fjab.worldcup.util.IntegerMatrix;
+import fjab.worldcup.util.SingleTeamResult;
 
 /**
  * Immutable object representing the result of a group. 

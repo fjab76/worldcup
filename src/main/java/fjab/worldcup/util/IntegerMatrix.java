@@ -16,21 +16,7 @@ public class IntegerMatrix {
 	 * Do not let any client create an instance
 	 */
 	private IntegerMatrix(){}
-	
-	/**
-	 * Returns the element of matrix with the least number of occurrences
-	 * @param matrix Bidimensional array of Integers
-	 * @return Integer The element of matrix with the least number of occurrences
-	 */
-	public static Integer findScarcestElement(Integer[][] matrix){
 		
-		Map<Integer,List<Integer>> map = groupElements(matrix);
-		
-		//The initial value of the reduce function may be any value of matrix
-		return map.keySet().stream()
-		                   .reduce(matrix[0][0], (result,element) -> {if(map.get(element).size()<map.get(result).size()) result = element;return result;});
-		
-	}
 	
 	/**
 	 * Groups the occurrences of the same type: all the elements with the same value are added to a list and mapped to said value
@@ -93,50 +79,9 @@ public class IntegerMatrix {
 	}
 	
 	
-	public static <T> void moveElementFromTo(T[] matrix, int from, int to) {		
-		
-		if(from<0 || from>matrix.length-1 || to<0 || to>matrix.length-1)
-			throw new IllegalArgumentException();
-		
-		T fromElement = matrix[from];
-		
-		if(to>from)	
-			for(int j=from; j<to; j++)
-				matrix[j] = matrix[j+1];
-		else
-			for(int j=from; j>to; j--)
-				matrix[j] = matrix[j-1];
-					
-		matrix[to] = fromElement;
-	}
-	
-	public static void putLinkedResultAtTheBeginning(int[] array, int m) {
-		
-		int linkedElement = array[m];
-		for(int j=m; j>0; j--){
-			array[j] = array[j-1];
-		}
-		array[0] = linkedElement;		
-	}
-	
-	public static Integer[] convertIntToIntegerArray(int[] array){
-		
-		return (Integer[]) IntStream.of(array).boxed().toArray();
-	}
-	
 	public static Integer[][] convertIntToIntegerMatrix(int[][] matrix){
 		
 		return (Integer[][]) Stream.of(matrix).map(x -> IntStream.of(x).boxed()).toArray();
-	}
-	
-	public static Integer[] convertListToArray(List<Integer> list){
-		
-		Integer[] array = new Integer[list.size()];
-		int index = 0;
-		for(Integer obj : list)
-			array[index++] = obj;
-		
-		return array;
 	}
 	
 	public static int[][] convertIntegerToIntMatrix(Integer[][] matrix){
@@ -147,60 +92,6 @@ public class IntegerMatrix {
 			array[j] = Arrays.stream(matrix[j]).mapToInt(x -> x).toArray();
 		
 		return array;
-	}
-	
-	public static void sortArrayByInducedOrder(Integer[] array, int orderInducingElement) {
-		Arrays.sort(array, (o1,o2) -> {
-			if(((Integer) o1).intValue()==orderInducingElement) return -1;
-			else if(((Integer) o2).intValue()==orderInducingElement) return 1;
-			else return ((Integer) o1).compareTo(((Integer) o2));
-		});
-	}
-	
-	/**
-	 * Concatenates array1 and array2
-	 * @param array1 Array of Integers
-	 * @param array2 Array of Integers
-	 * @return Integer[] New array of Integers containing the elements of array1 plus the elements of array2
-	 */
-	public static Integer[] concatArrays(Integer[] array1, Integer[] array2) {
-		
-		Integer[] result = new Integer[array1.length+array2.length];
-		System.arraycopy(array1, 0, result, 0, array1.length);
-		System.arraycopy(array2, 0, result, array1.length, array2.length);
-		
-		return result;
-	}
-
-	/**
-	 * Returns a new array with no null elements
-	 * @param array Array of Integers with null values
-	 * @return Integer[] New array of Integers with no null values. If the original array contains x
-	 * null values, the new array dimension is reference.length-x. If the original array does not contain
-	 * null values, the new array returned contains the same values as the original one.
-	 */
-	public static Integer[] removeNullElements(Integer[] array) {
-		
-		int numNulls = countNumberOfNulls(array);
-		if(numNulls==0)
-			return Arrays.copyOf(array, array.length);
-		
-		Integer[] newArray = new Integer[array.length-numNulls];
-
-		int k = 0;
-		for(int j=0; j<array.length; j++)
-			if(array[j]!=null)
-				newArray[k++] = array[j];
-		
-		return newArray;
-	}
-	
-	
-	public static int countNumberOfNulls(Integer[] array) {
-		
-		return (int) Arrays.stream(array)
-			  .filter(x -> x==null)
-			  .count();
 	}
 	
 	/**
@@ -218,6 +109,61 @@ public class IntegerMatrix {
 			}
 		}
 		return copy;
+	}
+
+	public static Integer findLeastFrequentElement(Integer[][] matrix, boolean strictMode){
+		
+		Map<Integer,List<Integer>> map = groupElements(matrix);
+		
+		if(strictMode){
+			//Checking if there are elements with the same maximum frequency
+			
+			int[] numElementsArray = map.values().stream()
+									.mapToInt(x -> x.size())
+									.toArray();		
+			
+			int max = numElementsArray[0];
+			for(int j=1; j<numElementsArray.length; j++){
+				
+				int numElements = (Integer) numElementsArray[j];
+				if(numElements>max)
+					max = numElements;
+				else if(numElements==max){
+					//There is no strict maximum
+					return null;
+				}
+					
+			}
+		}
+		
+		//The initial value of the reduce function may be any value of matrix
+		return map.keySet().stream()
+		                   .reduce(matrix[0][0], (result,element) -> {if(map.get(element).size()<map.get(result).size()) result = element;return result;})
+		                   .intValue();
+		
+	}
+	
+	public static int findMostFrequentElement(Integer[][] matrix){
+		
+		Map<Integer,List<Integer>> map = groupElements(matrix);
+		
+		//The initial value of the reduce function may be any value of matrix
+		return map.keySet().stream()
+		                   .reduce(matrix[0][0], (result,element) -> {if(map.get(element).size()>map.get(result).size()) result = element;return result;})
+		                   .intValue();
+		
+	}
+
+	public static Integer findMostBalancedColumn(Integer[][] matrix){		
+		
+		//grouping different elements of each column
+		List<Map<Integer, List<Integer>>> list = Arrays.stream(matrix)
+											      .map(x -> IntegerArray.groupElements(x))
+											      .collect(Collectors.toList());
+		
+		//searching the column with the least repeat elements of the same type
+		return IntStream.range(0, list.size()).
+				reduce(0, (result,element) -> {if(IntegerArray.getGreatestNumberOfRepetitions(list.get(element)).compareTo(IntegerArray.getGreatestNumberOfRepetitions(list.get(result)))==-1) result=element;return result;});
 	}
 
 }

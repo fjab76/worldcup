@@ -11,7 +11,7 @@ import fjab.worldcup.api.GroupResult;
 
 public class CombinatorialImplTest {
 	
-	private CombinatorialImpl impl;
+	private SolutionByCountingCombinations impl;
 	
 	static final int[][] _4TEAM_GROUP_INDIVIDUAL_COMBINATIONS = {
 		{-1,-1,-1},
@@ -338,7 +338,7 @@ public class CombinatorialImplTest {
 	
 	@Before
 	public void setup(){
-		impl = new CombinatorialImpl();
+		impl = new SolutionByCountingCombinations();
 	}
 	
 	/**

@@ -111,28 +111,35 @@ public class IntegerMatrix {
 		return copy;
 	}
 
+	/**
+	 * Finds the least frequent element in matrix. If there is more than one element in this situation and
+	 * strictMode is true, it returns null.
+	 * @param matrix Bidimensional array of Integers
+	 * @param strictMode Flag to set up the search in strict mode. In strict mode, only one element can be
+	 * the least frequent
+	 * @return Integer Returns the least frequent element. Null if strictMode is true and there is more than
+	 * one element being the least frequent element.
+	 */
 	public static Integer findLeastFrequentElement(Integer[][] matrix, boolean strictMode){
 		
 		Map<Integer,List<Integer>> map = groupElements(matrix);
 		
 		if(strictMode){
-			//Checking if there are elements with the same maximum frequency
 			
+			//Checking if there is more than one element with the same minimum frequency			
 			int[] numElementsArray = map.values().stream()
 									.mapToInt(x -> x.size())
 									.toArray();		
 			
-			int max = numElementsArray[0];
+			int min = numElementsArray[0];
 			for(int j=1; j<numElementsArray.length; j++){
 				
 				int numElements = (Integer) numElementsArray[j];
-				if(numElements>max)
-					max = numElements;
-				else if(numElements==max){
-					//There is no strict maximum
+				if(numElements<min)
+					min = numElements;
+				else if(numElements==min){					
 					return null;
-				}
-					
+				}					
 			}
 		}
 		
@@ -143,9 +150,28 @@ public class IntegerMatrix {
 		
 	}
 	
-	public static int findMostFrequentElement(Integer[][] matrix){
+	public static Integer findMostFrequentElement(Integer[][] matrix, boolean strictMode){
 		
 		Map<Integer,List<Integer>> map = groupElements(matrix);
+		
+		if(strictMode){
+			
+			//Checking if there is more than one element with the same minimum frequency			
+			int[] numElementsArray = map.values().stream()
+									.mapToInt(x -> x.size())
+									.toArray();		
+			
+			int max = numElementsArray[0];
+			for(int j=1; j<numElementsArray.length; j++){
+				
+				int numElements = (Integer) numElementsArray[j];
+				if(numElements>max)
+					max = numElements;
+				else if(numElements==max){					
+					return null;
+				}					
+			}
+		}
 		
 		//The initial value of the reduce function may be any value of matrix
 		return map.keySet().stream()
@@ -154,7 +180,13 @@ public class IntegerMatrix {
 		
 	}
 
-	public static Integer findMostBalancedColumn(Integer[][] matrix){		
+	/**
+	 * Finds the column with the least number of repeat elements. In case there is more than one column meeting
+	 * the condition, the first one is returned
+	 * @param matrix Bidimensional array of Integers
+	 * @return Index of the column with the least number of repeat elements.
+	 */
+	public static Integer findColumnWithLeastRepeatElements(Integer[][] matrix){		
 		
 		//grouping different elements of each column
 		List<Map<Integer, List<Integer>>> list = Arrays.stream(matrix)

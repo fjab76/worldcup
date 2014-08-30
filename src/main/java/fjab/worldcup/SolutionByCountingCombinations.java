@@ -262,7 +262,7 @@ public class SolutionByCountingCombinations implements GroupResultCalculator {
 	
 	private void sortArrayByMostFrequentElement(Integer[][] matrix) {
 		
-		int mostFrequentElement = IntegerMatrix.findMostFrequentElement(matrix);
+		int mostFrequentElement = IntegerMatrix.findMostFrequentElement(matrix,false);
 		int index = IntegerMatrix.indexOfFirstColumnWithElement(matrix, mostFrequentElement);
 		IntegerArray.moveElementFromTo(matrix, index, 1);
 		sortArrayByInducedOrder(matrix[0], mostFrequentElement);

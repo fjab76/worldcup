@@ -9,7 +9,7 @@ import org.junit.Test;
 import fjab.worldcup.api.GroupResult;
 
 
-public class BuilderImplTest {
+public class SolutionByConstructionTest {
 	
 	private SolutionByConstruction impl;
 	
@@ -323,5 +323,64 @@ public class BuilderImplTest {
 		GroupResult gr = new GroupResult(new Integer[][] {{-1,-1,0},{-1,0,0},{-1,0,1},{1,1,1}});
 		Assert.assertTrue(setCombinations.contains(gr));
 		
+	}
+	
+	@Test
+	public void entireGroupResultIsCompatible(){
+		
+		//given
+		Integer[] groupResult = {5,1,3,2,4};
+		Integer[] singleTeamResult = {1,5,2,3,4};
+		
+		//when
+		Integer[] resultingArray = new SolutionByConstruction().checkCompatibility(groupResult, singleTeamResult);
+		
+		//then
+		Assert.assertArrayEquals(new Integer[]{5,1,3,2,4}, resultingArray);		
+	}
+	
+	@Test
+	public void groupResultWithNotEnoughElements(){
+		
+		//given
+		Integer[] groupResult = {1,3,2,4};
+		Integer[] singleTeamResult = {1,2,3,4,7};
+		
+		//when
+		Integer[] resultingArray = new SolutionByConstruction().checkCompatibility(groupResult, singleTeamResult);
+		
+		//then
+		Assert.assertArrayEquals(null, resultingArray);		
+	}
+	
+	
+	
+	
+	@Test
+	public void partialGroupResultIsCompatible(){
+		
+		//given
+		Integer[] groupResult = {null,1,3,2,null};
+		Integer[] singleTeamResult = {0,2,3,4,1};
+		
+		//when
+		Integer[] resultingArray = new SolutionByConstruction().checkCompatibility(groupResult, singleTeamResult);
+		
+		//then
+		Assert.assertArrayEquals(new Integer[]{1,3,2,0,4}, resultingArray);		
+	}
+	
+	@Test
+	public void groupResultIsNotCompatible(){
+		
+		//given
+		Integer[] groupResult = {1,1,null};
+		Integer[] singleTeamResult = {-1,-1,1};
+		
+		//when
+		Integer[] resultingArray = new SolutionByConstruction().checkCompatibility(groupResult, singleTeamResult);
+		
+		//then
+		Assert.assertArrayEquals(null, resultingArray);		
 	}
 }

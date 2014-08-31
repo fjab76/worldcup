@@ -60,7 +60,7 @@ public class SolutionByConstruction implements GroupResultCalculator {
 				
 				if(team==numTeams-1)
 					try {
-						results.add(new GroupResult(groupResult));
+						results.add(new GroupResult(groupResult,false));
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

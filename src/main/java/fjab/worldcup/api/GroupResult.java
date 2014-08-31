@@ -49,6 +49,10 @@ public final class GroupResult {
 
 
 	// private final int[] points;
+	
+	public GroupResult(Integer[][] groupResult) {
+		this(groupResult,true);
+	}
 
 	/**
 	 * When an object is created, the following actions are carried out to make sure that a valid object is created:
@@ -59,22 +63,24 @@ public final class GroupResult {
 	 * 5.normalisation of the elements in the array by sorting the columns and the elements in the columns as specified above)
 	 * @param groupResult
 	 */
-	public GroupResult(Integer[][] groupResult) {
+	public GroupResult(Integer[][] groupResult, boolean strictMode) {
 		
-		if(!checkArrayDimensions(groupResult)){
-			throw new IllegalArgumentException("The array dimensions must be n x m with m=n-1");
-		}
-		
-		if(!checkElementsIdentity(groupResult)){
-			throw new IllegalArgumentException("The only elements allowed in the array are 1,0 and -1");
-		}
-		
-		if(!checkElementsBalance(groupResult)){
-			throw new IllegalArgumentException("The balance of elements is wrong");
-		}
-		
-		if(!checkElementsDistribution(groupResult)){
-			throw new IllegalArgumentException("The distribution of elements is wrong");
+		if(strictMode){
+			if(!checkArrayDimensions(groupResult)){
+				throw new IllegalArgumentException("The array dimensions must be n x m with m=n-1");
+			}
+			
+			if(!checkElementsIdentity(groupResult)){
+				throw new IllegalArgumentException("The only elements allowed in the array are 1,0 and -1");
+			}
+			
+			if(!checkElementsBalance(groupResult)){
+				throw new IllegalArgumentException("The balance of elements is wrong");
+			}
+			
+			if(!checkElementsDistribution(groupResult)){
+				throw new IllegalArgumentException("The distribution of elements is wrong");
+			}
 		}
 
 		/*

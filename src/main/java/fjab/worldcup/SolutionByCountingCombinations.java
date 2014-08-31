@@ -80,7 +80,7 @@ public class SolutionByCountingCombinations implements GroupResultCalculator {
 	private GroupResult createGroupResult(Integer[][] matrix){
 		
 		try {
-			return new GroupResult(matrix);
+			return new GroupResult(matrix,true);
 		} 
 		catch (IllegalArgumentException e) {
 			return null;

@@ -32,5 +32,31 @@ public class IntegerArrayTest extends GroovyAssert {
 		assertArrayEquals([0,2,3,1,4] as int[],matrix);
 	}
 	
+	@Test
+	public void arrayStartWith2(){
+		
+		//given
+		Integer[] matrix = [0,1,2,4,3]
+		
+		//when
+		IntegerArray.sortArrayStartingWithElement(matrix, 2)
+		
+		//then
+		assertArrayEquals([2,0,1,3,4] as int[],matrix)
+	}
+	
+	@Test
+	public void arrayStartWith3(){
+		
+		//given
+		Integer[] matrix = [1,0,2,3]
+		
+		//when
+		IntegerArray.sortArrayStartingWithElement(matrix, 3)
+		
+		//then
+		assertArrayEquals([3,0,1,2] as int[],matrix)
+	}
+	
 	
 }

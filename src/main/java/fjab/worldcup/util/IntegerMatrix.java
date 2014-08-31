@@ -59,26 +59,14 @@ public class IntegerMatrix {
 			
 		return combination;
 	}
-	
-	public static Integer[][] convertIntegerListToIntegerArray(List<Integer[]> list){
 		
-		Integer[][] combination = new Integer[list.size()][];
-		
-		for(int j=0; j<list.size(); j++){
-			combination[j] = new Integer[list.get(j).length];
-			for(int k=0; k<list.get(j).length; k++)
-				combination[j][k] = list.get(j)[k];
-		}
-			
-		return combination;
-	}
 	
 	/**
 	 * Copies the elements of a list of arrays into a matrix (bidimensional array)
 	 * @param original Bidimensional array to be copied
 	 * @return Integer[][] New bidimensional array containing a copy of each element in the list
 	 */
-	public static Integer[][] copyListArraysToMatrix(List<Integer[]> list){
+	public static Integer[][] copyListOfArraysToMatrix(List<Integer[]> list){
 		
 		Integer[][] matrix = new Integer[list.size()][];
 		
@@ -209,6 +197,52 @@ public class IntegerMatrix {
 		//searching the column with the least repeat elements of the same type
 		return IntStream.range(0, list.size()).
 				reduce(0, (result,element) -> {if(IntegerArray.getGreatestNumberOfRepetitions(list.get(element)).compareTo(IntegerArray.getGreatestNumberOfRepetitions(list.get(result)))==-1) result=element;return result;});
+	}
+
+
+	public static Integer[][] trimMatrix(Integer[][] matrix) {
+					
+		//Removing first column and first row
+		
+		//In this case, it is not possible to trim the matrix
+		if(matrix.length<=2){
+			return null;
+		}
+		
+		Integer[][] trimmedMatrix = new Integer[matrix.length-1][];
+		for(int j=0; j<trimmedMatrix.length; j++){
+			trimmedMatrix[j] = Arrays.copyOfRange(matrix[j+1],1,matrix[j+1].length);
+		}
+		
+		return trimmedMatrix;
+	}
+
+
+	public static int findFirstColumnContainingValue(Integer[][] matrix, int searchedValue, int columnIndexUpperLimit) {		
+		
+		int[] searchedValueOccurrences = IntStream.range(1, columnIndexUpperLimit+1)
+								        .map(x -> (int)Stream.of(matrix[x])
+								       		            .filter(y -> y.equals(searchedValue))
+								       		            .count())
+								        .toArray();
+		
+		int maxPosition = IntStream.range(0, searchedValueOccurrences.length)
+		.reduce(0, (maximumPosition,element) -> {if(searchedValueOccurrences[element]>searchedValueOccurrences[maximumPosition]) maximumPosition=element;return maximumPosition;});
+		
+		return searchedValueOccurrences[maxPosition]==0?-1:maxPosition+1;
+	}
+
+
+	public static Integer[][] replaceValue(Integer[][] matrix, Integer oldValue, Integer newValue){
+		
+		Integer[][] replacement = new Integer[matrix.length][];
+		for(int j=0; j<matrix.length; j++){
+			replacement[j] = new Integer[matrix[j].length];
+			for(int k=0; k<matrix[j].length; k++){
+				replacement[j][k] = matrix[j][k].equals(oldValue)?newValue:matrix[j][k];
+			}
+		}
+		return replacement;
 	}
 
 }

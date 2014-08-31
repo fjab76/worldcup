@@ -13,27 +13,6 @@ public class CombinatorialImplTest {
 	
 	private SolutionByCountingCombinations impl;
 	
-	static final int[][] _4TEAM_GROUP_INDIVIDUAL_COMBINATIONS = {
-		{-1,-1,-1},
-		{-1,-1,0},
-		{-1,-1,1},
-		{-1,0,0},
-		{-1,0,1},
-		{-1,1,1},
-		{0,0,0},
-		{0,0,1},
-		{0,1,1},
-		{1,1,1}
-	};
-	
-	static final int[][] _3TEAM_GROUP_INDIVIDUAL_COMBINATIONS = {
-		{-1,-1},
-		{-1,0},
-		{-1,1},		
-		{0,0},
-		{0,1},
-		{1,1}
-	};
 	
 	/**
 	 * {0,0},{0,0},{0,0} is valid

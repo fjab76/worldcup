@@ -58,13 +58,8 @@ public class SolutionByConstruction implements GroupResultCalculator {
 				for(int m=team+1; m<groupResult.length; m++)
 					groupResult[m][team] = -groupResult[team][m-1];				
 				
-				if(team==numTeams-1)
-					try {
-						results.add(new GroupResult(groupResult,false));
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+				if(team==numTeams-1)					
+					results.add(new GroupResult(groupResult,false));					
 				else
 					calculateTeamGroupResult(numTeams, results, singleTeamResults, groupResult, team+1);
 				
@@ -98,7 +93,7 @@ public class SolutionByConstruction implements GroupResultCalculator {
 		
 		int upperLimit = (int) generator.generateAllObjects().stream()
 				  .map(ICombinatoricsVector::getVector)
-				  .map(x -> IntegerMatrix.copyListArraysToMatrix(x))
+				  .map(x -> IntegerMatrix.copyListOfArraysToMatrix(x))
 				  .filter(x -> GroupResult.checkElementsIdentity(x))
 				  .filter(x -> GroupResult.checkElementsBalance(x))
 				  .count();

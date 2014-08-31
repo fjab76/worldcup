@@ -49,14 +49,7 @@ public class IntegerArray {
 		
 		return array;
 	}
-
-	public static void sortArrayByInducedOrder(Integer[] array, int orderInducingElement) {
-		Arrays.sort(array, (o1,o2) -> {
-			if(((Integer) o1).intValue()==orderInducingElement) return -1;
-			else if(((Integer) o2).intValue()==orderInducingElement) return 1;
-			else return ((Integer) o1).compareTo(((Integer) o2));
-		});
-	}
+	
 
 	/**
 	 * Concatenates array1 and array2
@@ -127,6 +120,14 @@ public class IntegerArray {
 			array[j] = array[j-1];
 		}
 		array[0] = linkedElement;		
+	}
+
+	public static void sortArrayStartingWithElement(Integer[] array, int startElement) {
+		Arrays.sort(array, (o1,o2) -> {
+			if(((Integer) o1).intValue()==startElement) return -1;
+			else if(((Integer) o2).intValue()==startElement) return 1;
+			else return ((Integer) o1).compareTo(((Integer) o2));
+		});
 	}
 
 }

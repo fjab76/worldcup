@@ -60,6 +60,19 @@ public class IntegerMatrix {
 		return combination;
 	}
 	
+	public static Integer[][] convertIntegerListToIntegerArray(List<Integer[]> list){
+		
+		Integer[][] combination = new Integer[list.size()][];
+		
+		for(int j=0; j<list.size(); j++){
+			combination[j] = new Integer[list.get(j).length];
+			for(int k=0; k<list.get(j).length; k++)
+				combination[j][k] = list.get(j)[k];
+		}
+			
+		return combination;
+	}
+	
 	/**
 	 * Copies the elements of a list of arrays into a matrix (bidimensional array)
 	 * @param original Bidimensional array to be copied

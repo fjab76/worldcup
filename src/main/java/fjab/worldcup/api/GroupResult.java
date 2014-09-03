@@ -2,8 +2,10 @@ package fjab.worldcup.api;
 
 import static fjab.worldcup.util.SingleTeamResult.GAME_RESULTS;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -244,14 +246,15 @@ public final class GroupResult {
 			combination[j] = Arrays.copyOf(originalCombination[j], originalCombination[j].length);
 		}				
 		
-		sortArray(combination);
+		//sortArray(combination);
+		Map<Integer,Integer[]> decisionMatrix = calculateDecisionMatrix(combination);
 		
 		//Looping over elements of 0-th column
 		for(int i=0; i<combination[0].length; i++){
 			int searchedValue = -combination[0][i];
 			
 			int columnIndexUpperLimit = combination.length-1-i;
-			int columnIndex = IntegerMatrix.findFirstColumnContainingValue(combination,searchedValue,columnIndexUpperLimit);
+			int columnIndex = findTeamWithMatchingResult(decisionMatrix,searchedValue,columnIndexUpperLimit);
 			//As soon as a result in one team fails to find its partner in another team, we can conclude that the combination
 			//is not valid
 			if(columnIndex==-1){
@@ -271,6 +274,104 @@ public final class GroupResult {
 		}				
 	}
 
+
+	static int findTeamWithMatchingResult(Map<Integer, Integer[]> decisionMatrix, int searchedValue, int columnIndexUpperLimit) {
+		
+		Integer[] searchedValueRow = decisionMatrix.get(searchedValue);
+		Integer[][] nextRows = getNextRows(decisionMatrix,searchedValue);
+		
+		int[] candidateTeams = IntStream.range(1, columnIndexUpperLimit)
+				                                .filter(x -> searchedValueRow[x]>0)
+				                                .toArray();
+		
+		Map<Integer,Integer> numOccurrencesPerTeam = calculateNumOccurrencesInNextRows(candidateTeams,nextRows);
+		List<Integer> teams = removeOccurrencesOtherThanMinimum(numOccurrencesPerTeam);
+		teams = selectTeamWithMostSearchedValues(searchedValueRow,teams);
+		
+		//After all the filters, if there is more than one team, return the first one		
+		return teams.get(0);
+	}
+
+	
+
+	private static Map<Integer, Integer> calculateNumOccurrencesInNextRows(int[] candidateTeams, Integer[][] nextRows) {
+		
+		Map<Integer, Integer> map = new HashMap<>();
+		
+		for(int j=0; j<candidateTeams.length; j++){
+			int team = candidateTeams[j];
+			int sum = 0;
+			for(int k=0; k<nextRows.length; k++){
+				sum += nextRows[k][team];
+			}
+			map.put(team, sum);
+		}
+		
+		return map;
+	}
+
+	private static List<Integer> selectTeamWithMostSearchedValues(Integer[] serachedValueRow, List<Integer> teams) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private static List<Integer> removeOccurrencesOtherThanMinimum(Map<Integer, Integer> numOccurrencesPerTeam) {
+		
+		Object[] listOfValues = new ArrayList<>(numOccurrencesPerTeam.values()).toArray();
+		Arrays.sort(listOfValues);
+		int minValue = (int) listOfValues[0];
+		
+		List<Integer> teams = new ArrayList<>();
+		
+		for(Integer key : numOccurrencesPerTeam.keySet()){
+			if(numOccurrencesPerTeam.get(key)==minValue){
+				teams.add(key);
+			}
+		}
+		
+		return teams;
+		
+	}
+
+
+	private static Integer[][] getNextRows(Map<Integer, Integer[]> decisionMatrix, int searchedValue) {
+		
+		List<Integer> listOfKeys = new ArrayList<>(decisionMatrix.keySet());
+		int searchedValueIndex = listOfKeys.indexOf(searchedValue);
+		
+		Integer[][] nextRows = new Integer[listOfKeys.size()-1-searchedValueIndex][];
+		
+		for(int j=searchedValueIndex+1,i=0; j<listOfKeys.size(); j++,i++){
+			nextRows[i] = decisionMatrix.get(listOfKeys.get(j));
+		}
+		
+		return nextRows;
+	}
+
+	static Map<Integer, Integer[]> calculateDecisionMatrix(Integer[][] combination) {
+		
+		Map<Integer, Integer[]> map = new LinkedHashMap<>();
+		
+		int searchedValue = Integer.MAX_VALUE;
+		for(int j=0; j<combination[0].length; j++){
+			
+			if(-combination[0][j]==searchedValue)
+				continue;
+			
+			searchedValue = -combination[0][j];
+			Integer[] array = new Integer[combination.length-1];
+			for(int k=1; k<combination.length; k++){
+				array[k-1] = calculateNumOccurrences(combination[k],searchedValue);
+			}
+			map.put(searchedValue, array);
+		}
+		return map;
+	}
+
+	private static Integer calculateNumOccurrences(Integer[] array, int searchedValue) {
+		
+		return (int) Arrays.asList(array).stream().filter(x -> x==searchedValue).count();
+	}
 
 	private static void sortArray(Integer[][] matrix) {
 		

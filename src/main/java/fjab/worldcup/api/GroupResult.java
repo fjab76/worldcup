@@ -275,26 +275,24 @@ public final class GroupResult {
 	}
 
 
-	static int findTeamWithMatchingResult(Map<Integer, Integer[]> decisionMatrix, int searchedValue, int columnIndexUpperLimit) {
+	static int findTeamWithMatchingResult(Map<Integer, Integer[]> decisionMatrix, int targetResult, int lastTeamToCheck) {
 		
-		Integer[] searchedValueRow = decisionMatrix.get(searchedValue);
-		Integer[][] nextRows = getNextRows(decisionMatrix,searchedValue);
+		Integer[] targetResultOccurrences = decisionMatrix.get(targetResult);
+		Integer[][] otherResultsOccurrences = getNextRows(decisionMatrix,targetResult);
 		
-		int[] candidateTeams = IntStream.range(1, columnIndexUpperLimit)
-				                                .filter(x -> searchedValueRow[x]>0)
+		int[] candidateTeams = IntStream.range(0, lastTeamToCheck)
+				                                .filter(x -> targetResultOccurrences[x]>0)
 				                                .toArray();
 		
-		Map<Integer,Integer> numOccurrencesPerTeam = calculateNumOccurrencesInNextRows(candidateTeams,nextRows);
-		List<Integer> teams = removeOccurrencesOtherThanMinimum(numOccurrencesPerTeam);
-		teams = selectTeamWithMostSearchedValues(searchedValueRow,teams);
-		
-		//After all the filters, if there is more than one team, return the first one		
-		return teams.get(0);
+		Map<Integer,Integer> otherResultsOccurrencesPerTeam = calculateOtherResultsOccurrences(candidateTeams,otherResultsOccurrences);
+		List<Integer> teams = removeTeamsWithMostOtherResultsOccurrences(otherResultsOccurrencesPerTeam);
+		return selectTeamWithMostTargetResultOccurrences(targetResultOccurrences,teams);
+
 	}
 
 	
 
-	private static Map<Integer, Integer> calculateNumOccurrencesInNextRows(int[] candidateTeams, Integer[][] nextRows) {
+	private static Map<Integer, Integer> calculateOtherResultsOccurrences(int[] candidateTeams, Integer[][] nextRows) {
 		
 		Map<Integer, Integer> map = new HashMap<>();
 		
@@ -310,12 +308,28 @@ public final class GroupResult {
 		return map;
 	}
 
-	private static List<Integer> selectTeamWithMostSearchedValues(Integer[] serachedValueRow, List<Integer> teams) {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * If there is more than one team meeting the condition, the first one is returned
+	 * @param occurrencesByTeam
+	 * @param candidateTeams
+	 * @return
+	 */
+	private static Integer selectTeamWithMostTargetResultOccurrences(Integer[] occurrencesByTeam, List<Integer> candidateTeams) {
+		
+		int maxValue = -1;
+		int maxValueTeam = 0;
+		for(int j=0; j<occurrencesByTeam.length; j++){
+			if(candidateTeams.contains(j)){
+				if(maxValue < occurrencesByTeam[j]){
+					maxValue = occurrencesByTeam[j];
+					maxValueTeam = j;
+				}
+			}
+		}
+		return maxValueTeam+1;
 	}
 
-	private static List<Integer> removeOccurrencesOtherThanMinimum(Map<Integer, Integer> numOccurrencesPerTeam) {
+	private static List<Integer> removeTeamsWithMostOtherResultsOccurrences(Map<Integer, Integer> numOccurrencesPerTeam) {
 		
 		Object[] listOfValues = new ArrayList<>(numOccurrencesPerTeam.values()).toArray();
 		Arrays.sort(listOfValues);

@@ -263,6 +263,7 @@ public final class GroupResult {
 			
 			IntegerArray.sortArrayStartingWithElement(combination[columnIndex],searchedValue);
 			IntegerArray.moveElementFromTo(combination, columnIndex, columnIndexUpperLimit);
+			
 		}
 		
 		Integer[][] trimmedCombination = IntegerMatrix.trimMatrix(combination);
@@ -278,15 +279,22 @@ public final class GroupResult {
 	static int findTeamWithMatchingResult(Map<Integer, Integer[]> decisionMatrix, int targetResult, int lastTeamToCheck) {
 		
 		Integer[] targetResultOccurrences = decisionMatrix.get(targetResult);
-		Integer[][] otherResultsOccurrences = getNextRows(decisionMatrix,targetResult);
+		Integer[][] otherResultsOccurrences = getOtherResultsOccurrences(decisionMatrix,targetResult);
 		
 		int[] candidateTeams = IntStream.range(0, lastTeamToCheck)
 				                                .filter(x -> targetResultOccurrences[x]>0)
 				                                .toArray();
+		if(candidateTeams.length==0) return -1;
 		
 		Map<Integer,Integer> otherResultsOccurrencesPerTeam = calculateOtherResultsOccurrences(candidateTeams,otherResultsOccurrences);
 		List<Integer> teams = removeTeamsWithMostOtherResultsOccurrences(otherResultsOccurrencesPerTeam);
-		return selectTeamWithMostTargetResultOccurrences(targetResultOccurrences,teams);
+		int team = selectTeamWithMostTargetResultOccurrences(targetResultOccurrences,teams);
+		
+		IntegerArray.moveElementFromTo(targetResultOccurrences, team, lastTeamToCheck-1);
+		for(int j=0; j<otherResultsOccurrences.length; j++)
+			IntegerArray.moveElementFromTo(otherResultsOccurrences[j], team, lastTeamToCheck-1);
+		
+		return team+1;
 
 	}
 
@@ -326,7 +334,7 @@ public final class GroupResult {
 				}
 			}
 		}
-		return maxValueTeam+1;
+		return maxValueTeam;
 	}
 
 	private static List<Integer> removeTeamsWithMostOtherResultsOccurrences(Map<Integer, Integer> numOccurrencesPerTeam) {
@@ -348,10 +356,10 @@ public final class GroupResult {
 	}
 
 
-	private static Integer[][] getNextRows(Map<Integer, Integer[]> decisionMatrix, int searchedValue) {
+	private static Integer[][] getOtherResultsOccurrences(Map<Integer, Integer[]> decisionMatrix, int targetResult) {
 		
 		List<Integer> listOfKeys = new ArrayList<>(decisionMatrix.keySet());
-		int searchedValueIndex = listOfKeys.indexOf(searchedValue);
+		int searchedValueIndex = listOfKeys.indexOf(targetResult);
 		
 		Integer[][] nextRows = new Integer[listOfKeys.size()-1-searchedValueIndex][];
 		

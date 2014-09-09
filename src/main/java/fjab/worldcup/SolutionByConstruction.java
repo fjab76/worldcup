@@ -59,7 +59,7 @@ public class SolutionByConstruction implements GroupResultCalculator {
 					groupResult[m][team] = -groupResult[team][m-1];				
 				
 				if(team==numTeams-1)					
-					results.add(new GroupResult(groupResult,false));					
+					results.add(new GroupResult(groupResult));					
 				else
 					calculateTeamGroupResult(numTeams, results, singleTeamResults, groupResult, team+1);
 				

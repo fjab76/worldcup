@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import fjab.worldcup.util.IntegerArray;
 import fjab.worldcup.util.IntegerMatrix;
 import fjab.worldcup.util.SingleTeamResult;
 
@@ -48,39 +47,33 @@ public final class GroupResult {
 	private static Map<Integer,Integer[][]> singleTeamResultsByGroupSize = new HashMap<>();
 
 
-	// private final int[] points;
-	
-	public GroupResult(Integer[][] groupResult) {
-		this(groupResult,true);
-	}
+	// private final int[] points;		
 
 	/**
 	 * When an object is created, the following actions are carried out to make sure that a valid object is created:
 	 * 1.validaton of the array dimensions
 	 * 2.validation of the identity of the elements (the only values allowed are -1,0,1)
 	 * 3.validation of the elements balance (for each element in the array there must be another element with the opposite value)
-	 * 4.validation of the elements distribution (two elements of a column cannot have their partners in the same column)
-	 * 5.normalisation of the elements in the array by sorting the columns and the elements in the columns as specified above)
+	 * 4.normalisation of the elements in the array by sorting the columns and the elements in the columns as specified above)
+	 * 
+	 * Important: there is no validation of the elements distribution (after several attempts, no solution has been found). Therefore, it is up to the client making
+	 * use of this class to ensure that the created object complies with this rule
+	 * 
 	 * @param groupResult
 	 */
-	public GroupResult(Integer[][] groupResult, boolean strictMode) {
+	public GroupResult(Integer[][] groupResult) {
 		
-		if(strictMode){
-			if(!checkArrayDimensions(groupResult)){
-				throw new IllegalArgumentException("The array dimensions must be n x m with m=n-1");
-			}
-			
-			if(!checkElementsIdentity(groupResult)){
-				throw new IllegalArgumentException("The only elements allowed in the array are 1,0 and -1");
-			}
-			
-			if(!checkElementsBalance(groupResult)){
-				throw new IllegalArgumentException("The balance of elements is wrong");
-			}
-			
-			if(!checkElementsDistribution(groupResult)){
-				throw new IllegalArgumentException("The distribution of elements is wrong");
-			}
+
+		if(!checkArrayDimensions(groupResult)){
+			throw new IllegalArgumentException("The array dimensions must be n x m with m=n-1");
+		}
+		
+		if(!checkElementsIdentity(groupResult)){
+			throw new IllegalArgumentException("The only elements allowed in the array are 1,0 and -1");
+		}
+		
+		if(!checkElementsBalance(groupResult)){
+			throw new IllegalArgumentException("The balance of elements is wrong");
 		}
 
 		/*
@@ -152,39 +145,7 @@ public final class GroupResult {
 						.collect(Collectors.joining(",", "{", "}"))).collect(Collectors.joining(","));
 	}
 	
-	
 
-	
-	
-	/**
-	 * Checks that the matrix complies with the following rules:
-	 * 1.all of the elements must be one of the values contained in GroupResults.GAME_RESULTS (-1,0,1)
-	 * 2.the number of 0s must be even
-	 * 3.the number of 1s must be equal to the number of -1s
-	 * @param matrix Bidimensional array of Integers to be checked
-	 * @return boolean True if the matrix complies with all the rules. False otherwise.
-	 */
-	/*public static boolean checkElements(Integer[][] matrix){
-
-		//All elements must be one of these values: -1,0,1
-		if(Stream.of(matrix).flatMap(x -> Stream.of(x)).filter(x -> (Arrays.binarySearch(GAME_RESULTS, x)==-1)).count()!=0){
-			return false;
-		}
-		
-		//The number of 0s must be even
-		//The number of 1s must be equal to the number of -1s
-		Map<Integer,List<Integer>> map = IntegerMatrix.groupElements(matrix);		
-		int num0s = map.get(GAME_RESULTS[1])!=null?map.get(GAME_RESULTS[1]).size():0;	
-		int num1s = map.get(GAME_RESULTS[2])!=null?map.get(GAME_RESULTS[2]).size():0;
-		int numMinus1s = map.get(GAME_RESULTS[0])!=null?map.get(GAME_RESULTS[0]).size():0;
-		
-		if(!(num0s/2*2==num0s && num1s==numMinus1s)){
-			throw new IllegalArgumentException("The balance of elements in the array is wrong");
-		}
-		
-		return true;
-	}*/
-	
 	public static boolean checkElementsIdentity(Integer[][] matrix){
 		
 		//All elements must be one of these values: -1,0,1
@@ -226,69 +187,6 @@ public final class GroupResult {
 		}
 		else
 			return IntegerMatrix.deepCopy(singleTeamResults);
-	}
-	
-	/**
-	 * Checks if the combination of results in a group passed as an argument is a valid combination. It is a valid combination if for
-	 * every win (1) found in a team there is a loss (-1) in another and viceversa. Likewise, for every draw (0) in a team
-	 * there must be a draw (0) in another.
-	 * 
-	 * @param combination 2-dimensional array representing the results in a group
-	 * @return boolean True if the given combination is valid. Otherwise, false.
-	 */
-	static boolean checkElementsDistribution(Integer[][] originalCombination) {				
-		
-		//Copying original array into other object
-		Integer[][] combination = new Integer[originalCombination.length][];
-		for(int j=0; j<combination.length; j++){
-			combination[j] = Arrays.copyOf(originalCombination[j], originalCombination[j].length);
-		}				
-		
-		sortArray(combination);
-		
-		//Looping over elements of 0-th column
-		for(int i=0; i<combination[0].length; i++){
-			int searchedValue = -combination[0][i];
-			
-			int columnIndexUpperLimit = combination.length-1-i;
-			int columnIndex = IntegerMatrix.findFirstColumnContainingValue(combination,searchedValue,columnIndexUpperLimit);
-			//As soon as a result in one team fails to find its partner in another team, we can conclude that the combination
-			//is not valid
-			if(columnIndex==-1){
-				return false;
-			}
-			
-			IntegerArray.sortArrayStartingWithElement(combination[columnIndex],searchedValue);
-			IntegerArray.moveElementFromTo(combination, columnIndex, columnIndexUpperLimit);
-		}
-		
-		Integer[][] trimmedCombination = IntegerMatrix.trimMatrix(combination);
-		if(trimmedCombination!=null){
-			return checkElementsDistribution(trimmedCombination);
-		}
-		else{
-			return combination[0][0].equals(-combination[1][0]);			
-		}				
-	}
-
-
-	private static void sortArray(Integer[][] matrix) {
-		
-		Integer scarcestElement = IntegerMatrix.findLeastFrequentElement(IntegerMatrix.replaceValue(matrix,-1,1), true);
-		int index;
-		if(scarcestElement==null){
-			
-			Arrays.sort(matrix, (x,y) -> IntegerArray.getGreatestNumberOfRepetitions(x).compareTo(IntegerArray.getGreatestNumberOfRepetitions(y)));
-			
-			//index = MatrixUtil.findMostBalancedColumn(matrix);	
-			scarcestElement = IntegerMatrix.findLeastFrequentElement(IntegerMatrix.replaceValue(matrix,-1,1), false);
-		}
-		else{
-			index = IntegerMatrix.indexOfFirstColumnWithElement(matrix, scarcestElement);
-			IntegerArray.moveElementFromTo(matrix, index, 0);
-		}
-				
-		IntegerArray.sortArrayStartingWithElement(matrix[0], scarcestElement);		
 	}
 
 }

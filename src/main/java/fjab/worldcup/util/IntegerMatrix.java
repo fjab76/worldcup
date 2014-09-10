@@ -7,15 +7,14 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import fjab.worldcup.api.IntegerArray;
+
 /**
  * Utility class with operations on a bidimensional array of Integers
  */
 public class IntegerMatrix {
 	
-	/**
-	 * Do not let any client create an instance
-	 */
-	private IntegerMatrix(){}
+	private static IntegerArray integerArray;
 		
 	
 	/**
@@ -191,12 +190,12 @@ public class IntegerMatrix {
 		
 		//grouping different elements of each column
 		List<Map<Integer, List<Integer>>> list = Arrays.stream(matrix)
-											      .map(x -> IntegerArray.groupElements(x))
+											      .map(x -> integerArray.groupElements(x))
 											      .collect(Collectors.toList());
 		
 		//searching the column with the least repeat elements of the same type
 		return IntStream.range(0, list.size()).
-				reduce(0, (result,element) -> {if(IntegerArray.getGreatestNumberOfRepetitions(list.get(element)).compareTo(IntegerArray.getGreatestNumberOfRepetitions(list.get(result)))==-1) result=element;return result;});
+				reduce(0, (result,element) -> {if(integerArray.getMostFrequentNumberOfRepetitions(list.get(element)).compareTo(integerArray.getMostFrequentNumberOfRepetitions(list.get(result)))==-1) result=element;return result;});
 	}
 
 
@@ -243,6 +242,10 @@ public class IntegerMatrix {
 			}
 		}
 		return replacement;
+	}
+
+	public void setIntegerArray(IntegerArray integerArray) {
+		this.integerArray = integerArray;
 	}
 
 }

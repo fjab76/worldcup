@@ -14,18 +14,6 @@ class IntegerArrayGImplTest extends GroovyAssert {
 		integerArrayImpl = new IntegerArrayGImpl();
 	}
 	
-	@Test
-	public void mostFrequentNumberOfRepetitionsIs3(){
-		
-		//given
-		Integer[] array = [1,2,3,2,4,3,2]
-		
-		//when
-		def repetitions = integerArrayImpl.getMostFrequentNumberOfRepetitions(array)
-		
-		//then
-		assert 3==repetitions
-	}
 	
 	@Test
 	public void arrayElementsAreInteger(){
@@ -37,7 +25,7 @@ class IntegerArrayGImplTest extends GroovyAssert {
 		def newArray = integerArrayImpl.convertIntToIntegerArray(array)
 		
 		//then
-		assert newArray.findAll({it instanceof Integer}).size()==array.size()
+		assert newArray.every({it instanceof Integer})
 		
 	}
 	
@@ -51,7 +39,7 @@ class IntegerArrayGImplTest extends GroovyAssert {
 		def newArray = integerArrayImpl.convertListToArray(list)
 		
 		//then
-		assert newArray.findAll({it instanceof Integer}).size()==list.size()
+		assert newArray.every({it instanceof Integer})
 		
 	}
 	
@@ -67,6 +55,20 @@ class IntegerArrayGImplTest extends GroovyAssert {
 		
 		//then
 		assertArrayEquals([1,2,3,4,5] as Integer[],newArray)
+		
+	}
+	
+	@Test
+	public void arrayIs123AfterRemovingNulls(){
+		
+		//given
+		Integer[] array = [1,2,null,3,null]
+		
+		//when
+		def newArray = integerArrayImpl.removeNullElements(array)
+		
+		//then
+		assertArrayEquals([1,2,3] as Integer[],newArray)
 		
 	}
 }

@@ -7,14 +7,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import fjab.worldcup.api.IntegerArray;
-
 /**
  * Utility class with operations on a bidimensional array of Integers
  */
 public class IntegerMatrix {
-	
-	private static IntegerArray integerArray;
 		
 	
 	/**
@@ -186,7 +182,7 @@ public class IntegerMatrix {
 	 * @param matrix Bidimensional array of Integers
 	 * @return Index of the column with the least number of repeat elements.
 	 */
-	public static Integer findColumnWithLeastRepeatElements(Integer[][] matrix){		
+	/*public static Integer findColumnWithLeastRepeatElements(Integer[][] matrix){		
 		
 		//grouping different elements of each column
 		List<Map<Integer, List<Integer>>> list = Arrays.stream(matrix)
@@ -196,7 +192,7 @@ public class IntegerMatrix {
 		//searching the column with the least repeat elements of the same type
 		return IntStream.range(0, list.size()).
 				reduce(0, (result,element) -> {if(integerArray.getMostFrequentNumberOfRepetitions(list.get(element)).compareTo(integerArray.getMostFrequentNumberOfRepetitions(list.get(result)))==-1) result=element;return result;});
-	}
+	}*/
 
 
 	public static Integer[][] trimMatrix(Integer[][] matrix) {
@@ -244,8 +240,5 @@ public class IntegerMatrix {
 		return replacement;
 	}
 
-	public void setIntegerArray(IntegerArray integerArray) {
-		this.integerArray = integerArray;
-	}
 
 }

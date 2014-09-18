@@ -2,9 +2,8 @@ package fjab.worldcup.util;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import fjab.worldcup.api.IntegerArray;
 
@@ -12,35 +11,18 @@ import fjab.worldcup.api.IntegerArray;
  * Java implementation of IntegerArray
  */
 public class IntegerArrayImpl implements IntegerArray{
-	
-	
-	public Map<Integer,List<Integer>> groupElements(Integer[] array){
 		
-		return Arrays.stream(array)
-				  .collect(Collectors.groupingBy(Integer::intValue));		
-	}
-	
-	public Integer getMostFrequentNumberOfRepetitions(Integer[] array){		
-		
-		return getMostFrequentNumberOfRepetitions(groupElements(array));
-	}
-	
-	public Integer getMostFrequentNumberOfRepetitions(Map<Integer, List<Integer>> map){
-		
-		return map.values().stream()
-					.mapToInt(x -> x.size())
-					.max().getAsInt();
-
-	}
-
+	@Override
 	public Integer[] convertIntToIntegerArray(int[] array){
 		
-		return (Integer[]) IntStream.of(array).boxed().toArray(Integer[]::new);
+		return IntStream.of(array).boxed().toArray(Integer[]::new);
 	}
 
+	@Override
 	public Integer[] convertListToArray(List<Integer> list){
 		
-		return (Integer[]) list.stream().toArray(Integer[]::new);
+		//return list.stream().toArray(Integer[]::new);
+		return list.toArray(new Integer[0]);
 
 	}
 	
@@ -51,6 +33,7 @@ public class IntegerArrayImpl implements IntegerArray{
 	 * @param array2 Array of Integers
 	 * @return Integer[] New array of Integers containing the elements of array1 plus the elements of array2
 	 */
+	@Override
 	public Integer[] concatArrays(Integer[] array1, Integer[] array2) {
 		
 		Integer[] result = new Integer[array1.length+array2.length];
@@ -67,53 +50,10 @@ public class IntegerArrayImpl implements IntegerArray{
 	 * null values, the new array dimension is reference.length-x. If the original array does not contain
 	 * null values, the new array returned contains the same values as the original one.
 	 */
-	public static Integer[] removeNullElements(Integer[] array) {
+	@Override
+	public Integer[] removeNullElements(Integer[] array) {
 		
-		int numNulls = IntegerArrayImpl.countNumberOfNulls(array);
-		if(numNulls==0)
-			return Arrays.copyOf(array, array.length);
-		
-		Integer[] newArray = new Integer[array.length-numNulls];
-	
-		int k = 0;
-		for(int j=0; j<array.length; j++)
-			if(array[j]!=null)
-				newArray[k++] = array[j];
-		
-		return newArray;
-	}
-
-	public static int countNumberOfNulls(Integer[] array) {
-		
-		return (int) Arrays.stream(array)
-			  .filter(x -> x==null)
-			  .count();
-	}
-
-	public static <T> void moveElementFromTo(T[] matrix, int from, int to) {		
-		
-		if(from<0 || from>matrix.length-1 || to<0 || to>matrix.length-1)
-			throw new IllegalArgumentException();
-		
-		T fromElement = matrix[from];
-		
-		if(to>from)	
-			for(int j=from; j<to; j++)
-				matrix[j] = matrix[j+1];
-		else
-			for(int j=from; j>to; j--)
-				matrix[j] = matrix[j-1];
-					
-		matrix[to] = fromElement;
-	}
-
-	public static void putLinkedResultAtTheBeginning(int[] array, int m) {
-		
-		int linkedElement = array[m];
-		for(int j=m; j>0; j--){
-			array[j] = array[j-1];
-		}
-		array[0] = linkedElement;		
+		return Stream.of(array).filter(x -> x!=null).toArray(Integer[]::new);
 	}
 
 	public static void sortArrayStartingWithElement(Integer[] array, int startElement) {

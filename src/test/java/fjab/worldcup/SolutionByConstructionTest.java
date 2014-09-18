@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import fjab.worldcup.api.GroupResult;
+import fjab.worldcup.util.IntegerArrayImpl;
 
 
 public class SolutionByConstructionTest {
@@ -17,6 +18,7 @@ public class SolutionByConstructionTest {
 	@Before
 	public void setup(){
 		impl = new SolutionByConstruction();
+		impl.setIntegerArray(new IntegerArrayImpl());
 	}
 	
 	/**
@@ -312,7 +314,7 @@ public class SolutionByConstructionTest {
 		Integer[] singleTeamResult = {1,5,2,3,4};
 		
 		//when
-		Integer[] resultingArray = new SolutionByConstruction().checkCompatibility(groupResult, singleTeamResult);
+		Integer[] resultingArray = impl.checkCompatibility(groupResult, singleTeamResult);
 		
 		//then
 		Assert.assertArrayEquals(new Integer[]{5,1,3,2,4}, resultingArray);		
@@ -343,7 +345,7 @@ public class SolutionByConstructionTest {
 		Integer[] singleTeamResult = {0,2,3,4,1};
 		
 		//when
-		Integer[] resultingArray = new SolutionByConstruction().checkCompatibility(groupResult, singleTeamResult);
+		Integer[] resultingArray = impl.checkCompatibility(groupResult, singleTeamResult);
 		
 		//then
 		Assert.assertArrayEquals(new Integer[]{1,3,2,0,4}, resultingArray);		
@@ -357,7 +359,7 @@ public class SolutionByConstructionTest {
 		Integer[] singleTeamResult = {-1,-1,1};
 		
 		//when
-		Integer[] resultingArray = new SolutionByConstruction().checkCompatibility(groupResult, singleTeamResult);
+		Integer[] resultingArray = impl.checkCompatibility(groupResult, singleTeamResult);
 		
 		//then
 		Assert.assertArrayEquals(null, resultingArray);		

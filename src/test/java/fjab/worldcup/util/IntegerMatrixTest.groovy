@@ -116,7 +116,7 @@ class IntegerMatrixTest  {
 	//=============== TESTING mostBalancedColumnIsSecond ======================
 	//=========================================================================
 	
-	@Test
+	/*@Test
 	public void columnWithLeastRepeatElementsIsSecond(){
 		
 		//given
@@ -127,6 +127,6 @@ class IntegerMatrixTest  {
 		
 		//then
 		assert 1==indexOfColumn;
-	}
+	}*/
 
 }

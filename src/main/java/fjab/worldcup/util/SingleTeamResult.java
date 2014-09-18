@@ -28,7 +28,7 @@ public final class SingleTeamResult {
 		Integer[][] teamResults = new Integer[(int) generator.getNumberOfGeneratedObjects()][numTeams-1];		
 		int j = 0;
 		for(ICombinatoricsVector<Integer> comb : generator)
-			teamResults[j++] = IntegerArrayImpl.convertListToArray(comb.getVector());					
+			teamResults[j++] = comb.getVector().toArray(new Integer[0]);					
 		
 		return teamResults;
 	}

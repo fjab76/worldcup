@@ -16,20 +16,7 @@ class IntegerArrayImplTest extends GroovyAssert {
 	}
 	
 	@Test
-	public void mostFrequentNumberOfRepetitionsIs3(){
-		
-		//given
-		Integer[] array = [1,2,3,2,4,3,2]
-		
-		//when
-		def repetitions = integerArrayImpl.getMostFrequentNumberOfRepetitions(array)
-		
-		//then
-		assert 3==repetitions
-	}
-	
-	@Test
-	public void arrayElementsAreInteger(){
+	void arrayElementsAreInteger(){
 		
 		//given
 		int[] array = [1,2,3]
@@ -38,12 +25,11 @@ class IntegerArrayImplTest extends GroovyAssert {
 		def newArray = integerArrayImpl.convertIntToIntegerArray(array)
 		
 		//then
-		assert newArray.findAll({it instanceof Integer}).size()==array.size()
-		
+		assert newArray.every({it instanceof Integer})
 	}
 	
 	@Test
-	public void arrayElementsAreInteger2(){
+	void arrayElementsAreInteger2(){
 		
 		//given
 		List<Integer> list = [1,2,3]
@@ -52,12 +38,12 @@ class IntegerArrayImplTest extends GroovyAssert {
 		def newArray = integerArrayImpl.convertListToArray(list)
 		
 		//then
-		assert newArray.findAll({it instanceof Integer}).size()==list.size()
+		assert newArray.every({it instanceof Integer})
 		
 	}
 	
 	@Test
-	public void arrayIs12345(){
+	void arrayIs12345(){
 		
 		//given
 		Integer[] array1 = [1,2,3]
@@ -72,39 +58,27 @@ class IntegerArrayImplTest extends GroovyAssert {
 	}
 	
 	
-	
+	@Test
+	void arrayIs123AfterRemovingNulls(){
+		
+		//given
+		Integer[] array = [1,2,null,3,null]
+		
+		//when
+		def newArray = integerArrayImpl.removeNullElements(array)
+		
+		//then
+		assertArrayEquals([1,2,3] as Integer[],newArray)
+		
+	}
 	
 	
 	//=======================================
 	
-	@Test	
-	public void moveColumnFrom1To3(){
-		
-		//given
-		int[][] matrix = [[0,0],[1,1],[2,2],[3,3],[4,4]];
-		
-		//when
-		IntegerArrayImpl.moveElementFromTo(matrix, 1, 3);
-		
-		//then	
-		assertArrayEquals([[0,0],[2,2],[3,3],[1,1],[4,4]] as int[][],matrix);
-	}
 	
-	@Test	
-	public void moveElementFrom1To3(){
-		
-		//given
-		Integer[] matrix = [0,1,2,3,4];		
-		
-		//when
-		IntegerArrayImpl.moveElementFromTo(matrix, 1, 3);
-		
-		//then		
-		assertArrayEquals([0,2,3,1,4] as int[],matrix);
-	}
 	
 	@Test
-	public void arrayStartWith2(){
+	 void arrayStartWith2(){
 		
 		//given
 		Integer[] matrix = [0,1,2,4,3]

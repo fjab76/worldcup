@@ -10,12 +10,13 @@ import org.paukov.combinatorics.ICombinatoricsVector;
 
 import fjab.worldcup.api.GroupResult;
 import fjab.worldcup.api.GroupResultCalculator;
-import fjab.worldcup.util.IntegerArrayImpl;
+import fjab.worldcup.api.IntegerArray;
 import fjab.worldcup.util.IntegerMatrix;
 import fjab.worldcup.util.SingleTeamResult;
 
 public class SolutionByConstruction implements GroupResultCalculator {
 	
+	private IntegerArray integerArray;
 
 	@Override
 	public Set<GroupResult> calculateGroupResults(int numTeams) {
@@ -124,7 +125,7 @@ public class SolutionByConstruction implements GroupResultCalculator {
 		Integer[] singleTeamResultCopy = Arrays.copyOf(singleTeamResult, singleTeamResult.length);		
 		
 		//Copy of groupResult with no nulls
-		Integer[] groupResultWithNoNulls = IntegerArrayImpl.removeNullElements(groupResult);
+		Integer[] groupResultWithNoNulls = integerArray.removeNullElements(groupResult);
 		
 		//Defensive copy of groupResultWithNoNulls used to manipulate its elements without altering the original array  
 		Integer[] groupResultWithNoNullsCopy = Arrays.copyOf(groupResultWithNoNulls, groupResultWithNoNulls.length);
@@ -159,10 +160,14 @@ public class SolutionByConstruction implements GroupResultCalculator {
 			//Composing the array to return
 			Integer[] preMatch = Arrays.copyOfRange(singleTeamResultCopy, 0, initialMatchingIndex);
 			Integer[] postMatch = Arrays.copyOfRange(singleTeamResultCopy, finalMatchingIndex+1, singleTeamResultCopy.length);
-			Integer[] nonMatchedElements = IntegerArrayImpl.concatArrays(preMatch,postMatch);
-			return IntegerArrayImpl.concatArrays(groupResultWithNoNulls,nonMatchedElements);
+			Integer[] nonMatchedElements = integerArray.concatArrays(preMatch,postMatch);
+			return integerArray.concatArrays(groupResultWithNoNulls,nonMatchedElements);
 			
 		}		
+	}
+
+	public void setIntegerArray(IntegerArray integerArray) {
+		this.integerArray = integerArray;
 	}
 	
 	

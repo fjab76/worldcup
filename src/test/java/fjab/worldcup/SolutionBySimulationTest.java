@@ -17,7 +17,7 @@ public class SolutionBySimulationTest {
 	@Before
 	public void setup(){
 		impl = new SolutionBySimulation();
-		impl.setNumIterations(1000);
+		//impl.setNumIterations(100);
 	}
 	
 	/**

@@ -18,61 +18,70 @@ class SolutionBySimulation implements GroupResultCalculator {
 		//Group results are added to this set as they are calculated
 		Set<GroupResult> groupResults = []
 		
-		//Algorithm
 		//Teams are represented by numbers: 0,1,2,3...
-		List<Integer[]>  matches = calculateMatches(numTeams)
-		List<Integer[][]> rounds = calculateRounds(matches, numTeams)
+		List matches = calculateMatches(numTeams)
+		List rounds = calculateRounds(matches, numTeams)
 		
 		(1..numIterations).each {playGroup rounds,groupResults,numTeams}
 
 		return groupResults
 	}
 	
-	private List<Integer[]> calculateMatches(int numTeams){
+	private List calculateMatches(int numTeams){
 		
 		ICombinatoricsVector<Integer> originalVector = Factory.createVector(0..<numTeams)
 		Generator<Integer> generator = Factory.createSimpleCombinationGenerator(originalVector, 2 as Integer)
 		
-		generator.generateAllObjects().collect{it.getVector().toArray()}
+		generator.generateAllObjects().collect{it.getVector()}
 	}
 	
-	private List<Integer[][]> calculateRounds(List<Integer[]> matches, int numTeams){
+	private List calculateRounds(List matches, int numTeams){
 		
-		/*ICombinatoricsVector<Integer[]> originalVector = Factory.createVector(matches as Integer[][])
+		ICombinatoricsVector<Integer[]> originalVector = Factory.createVector(matches as Integer[][])
 		Generator<Integer[]> generator = Factory.createSimpleCombinationGenerator(originalVector, numTeams/2 as Integer)
 		
-		generator.generateAllObjects().collect{it.getVector().toArray()} as List<Integer[][]>*/
+		List roundList = generator.generateAllObjects().collect{it.getVector()}
+		roundList.findAll {filterOutInvalidRound it}
 		
 		/*List<Integer[][]> list = new ArrayList<>()
 		list.add([[0,1],[2,3]] as Integer[][])
 		list.add([[0,2],[1,3]] as Integer[][])
 		list.add([[0,3],[1,2]] as Integer[][])*/
-		[[[0,1],[2,3]],[[0,2],[1,3]],[[0,3],[1,2]]] as List<Integer[][]>
+		//[[[0,1],[2,3]],[[0,2],[1,3]],[[0,3],[1,2]]] 
 		//list
+	}
+	
+	private boolean filterOutInvalidRound(List round){
+		
+		Boolean[] listOfOccurrencesByTeam = new Boolean[round.size()*2]
+		for(match in round)
+			for(team in match)
+				if(listOfOccurrencesByTeam[team]==null)
+					listOfOccurrencesByTeam[team] = true
+				else
+					return false
+		
+		return true				
 	}
 	
 	
 	
-	private void playGroup(List<Integer[][]> rounds, Set<GroupResult> groupResults, int numTeams){
+	private void playGroup(List rounds, Set<GroupResult> groupResults, int numTeams){
 		
 		Integer[][] resultsTable = new Integer[numTeams][rounds.size()]
-		//rounds.eachWithIndex {Integer[][] round, int i -> playRound(round,i,resultsTable)}
 		
-		int i = 0;
-		for(Integer[][] round in rounds){
-			playRound(round,i++,resultsTable)
-		}
+		rounds.eachWithIndex {round,i -> playRound(round,i++,resultsTable)}		
 		
 		groupResults.add(new GroupResult(resultsTable))
 	}
 	
-	private def playRound(Integer[][] round, int roundNumber, Integer[][] resultsTable){
+	private def playRound(List round, int roundNumber, Integer[][] resultsTable){
 		
-		round.each{playMatch it,roundNumber,resultsTable}
+		round.each{playMatch it as List,roundNumber,resultsTable}
 		
 	}
 	
-	private void playMatch(Integer[] match, int roundNumber, Integer[][] resultsTable){
+	private void playMatch(List match, int roundNumber, Integer[][] resultsTable){
 		
 		//result only can take one of the values: -1,0,1 to indicate loss,draw,win respectively
 		int result = getMatchResult()
@@ -101,9 +110,9 @@ class SolutionBySimulation implements GroupResultCalculator {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-	
+	/*
 	public void setNumIterations(int numInterations){
 		this.numIterations = numIterations;
-	}
+	}*/
 
 }

@@ -7,9 +7,7 @@ import java.util.List;
  */
 public interface IntegerArray {
 	
-	Integer[] convertIntToIntegerArray(int[] array);
-	
-	Integer[] convertListToArray(List<Integer> list);
+	Integer[] convertIntToIntegerArray(int[] array);	
 	
 	/**
 	 * Concatenates array1 and array2

@@ -14,7 +14,7 @@ class GenericsArrayImplTest extends GroovyAssert{
 	//Identity operator
 	private UnaryOperator<Integer> identityOperator = {it}
 	//Parity operator
-	private UnaryOperator<Integer> parityOperator = {it%2}
+	private UnaryOperator<Integer> evenNumberOperator = {it%2}
 	//Radius extractor function
 	private Function<Circle,Integer> radiusExtractorOperator = {it.radius}
 	
@@ -81,7 +81,7 @@ class GenericsArrayImplTest extends GroovyAssert{
 		Integer[] array = [1,2,3,4,5,6]
 		
 		//when
-		def map = objUnderTest.groupElements(array, parityOperator)
+		def map = objUnderTest.groupElements(array, evenNumberOperator)
 		
 		//then
 		assert map.containsKey(0)

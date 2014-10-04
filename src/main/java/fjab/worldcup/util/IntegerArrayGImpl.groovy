@@ -11,13 +11,7 @@ class IntegerArrayGImpl implements IntegerArray{
 	@Override
 	Integer[] convertIntToIntegerArray(int[] array){
 		
-		array.collect({Integer.valueOf(it)});
-	}
-
-	@Override
-	public Integer[] convertListToArray(List<Integer> list) {
-		
-		list.collect({Integer.valueOf(it)});
+		array.collect({it});
 	}
 
 	@Override

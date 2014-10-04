@@ -17,14 +17,6 @@ public class IntegerArrayImpl implements IntegerArray{
 		
 		return IntStream.of(array).boxed().toArray(Integer[]::new);
 	}
-
-	@Override
-	public Integer[] convertListToArray(List<Integer> list){
-		
-		//return list.stream().toArray(Integer[]::new);
-		return list.toArray(new Integer[0]);
-
-	}
 	
 
 	/**

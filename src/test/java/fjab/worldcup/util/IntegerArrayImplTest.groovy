@@ -29,20 +29,6 @@ class IntegerArrayImplTest extends GroovyAssert {
 	}
 	
 	@Test
-	void arrayElementsAreInteger2(){
-		
-		//given
-		List<Integer> list = [1,2,3]
-		
-		//when
-		def newArray = integerArrayImpl.convertListToArray(list)
-		
-		//then
-		assert newArray.every({it instanceof Integer})
-		
-	}
-	
-	@Test
 	void arrayIs12345(){
 		
 		//given

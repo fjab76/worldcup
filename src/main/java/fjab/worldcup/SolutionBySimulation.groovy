@@ -104,12 +104,6 @@ class SolutionBySimulation implements GroupResultCalculator {
 			return 1
 	}
 	
-
-	@Override
-	public int calculateUpperLimitOfResults(int numTeams) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 	/*
 	public void setNumIterations(int numInterations){
 		this.numIterations = numIterations;

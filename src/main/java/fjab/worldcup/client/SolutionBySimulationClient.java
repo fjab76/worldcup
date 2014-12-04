@@ -16,10 +16,10 @@ public class SolutionBySimulationClient {
 		int numTeams = Integer.parseInt(args[0]);
 		
 		SolutionBySimulation simulationImpl = new SolutionBySimulation();
-		int upperLimit = simulationImpl.calculateUpperLimitOfResults(numTeams);
 		Set<GroupResult> combinations = simulationImpl.calculateGroupResults(numTeams);
-		System.out.println("upper limit:"+upperLimit);
-		System.out.println("num combinations:"+combinations.size());
+		System.out.println("===============================================================");
+		System.out.println("              Num combinations:"+combinations.size());
+		System.out.println("===============================================================");
 	}
 
 

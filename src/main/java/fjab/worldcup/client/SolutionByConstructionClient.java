@@ -18,10 +18,10 @@ public class SolutionByConstructionClient {
 		
 		SolutionByConstruction constructionImpl = new SolutionByConstruction();
 		constructionImpl.setIntegerArray(new IntegerArrayImpl());
-		int upperLimit = constructionImpl.calculateUpperLimitOfResults(numTeams);
 		Set<GroupResult> combinations = constructionImpl.calculateGroupResults(numTeams);
-		System.out.println("upper limit:"+upperLimit);
-		System.out.println("num combinations:"+combinations.size());
+		System.out.println("===============================================================");
+		System.out.println("              Num combinations:"+combinations.size());
+		System.out.println("===============================================================");
 	}
 
 

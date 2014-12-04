@@ -14,11 +14,4 @@ public interface GroupResultCalculator {
 	 * @see GroupResult
 	 */
 	Set<GroupResult> calculateGroupResults(int numTeams);
-	
-	/**
-	 * Provides an upper limit to the number of results that can happen in a group with numTeams
-	 * @param numTeams Number of teams in the group
-	 * @return int Upper limit, an integer greater than 0
-	 */
-	int calculateUpperLimitOfResults(int numTeams);
 }

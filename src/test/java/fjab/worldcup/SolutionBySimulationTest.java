@@ -1,5 +1,6 @@
 package fjab.worldcup;
 
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Assert;
@@ -129,19 +130,6 @@ public class SolutionBySimulationTest {
 		//then
 		GroupResult gr = new GroupResult(new Integer[][] {{-1,-1,0},{-1,0,1},{0,0,0},{0,1,1}});
 		Assert.assertTrue(setCombinations.contains(gr));
-		
-	}
-	
-	
-	
-	/**
-	 * Create combination: {1,1,1},{-1,0,1},{-1,-1,1},{-1,-1,0}
-	 */
-	@Test
-	public void createCombination(){
-		
-		GroupResult gr = new GroupResult(new Integer[][] {{1,1,1},{-1,0,1},{-1,-1,1},{-1,-1,0}});
-		System.out.println("\n\n"+gr.toString());
 		
 	}
 	
@@ -320,5 +308,6 @@ public class SolutionBySimulationTest {
 		//then
 		Assert.assertArrayEquals(null, resultingArray);		
 	}
+	
 
 }

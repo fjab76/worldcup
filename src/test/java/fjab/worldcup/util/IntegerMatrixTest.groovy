@@ -111,22 +111,5 @@ class IntegerMatrixTest  {
 		assert 0==element;
 	
 	}
-	
-	//=========================================================================
-	//=============== TESTING mostBalancedColumnIsSecond ======================
-	//=========================================================================
-	
-	/*@Test
-	public void columnWithLeastRepeatElementsIsSecond(){
-		
-		//given
-		Integer[][] matrix = [[1,1,2],[-1,0,1],[-1,0,1],[0,0,1]];
-		
-		//when
-		def indexOfColumn = IntegerMatrix.findColumnWithLeastRepeatElements(matrix);
-		
-		//then
-		assert 1==indexOfColumn;
-	}*/
 
 }

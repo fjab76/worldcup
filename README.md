@@ -17,6 +17,11 @@ There are 2 client classes with a main method, one for each algorithm: SolutionB
 mvn exec:java -Dexec.mainClass="fjab.worldcup.client.SolutionBySimulationClient" -Dexec.args="4 10000"
 mvn exec:java -Dexec.mainClass="fjab.worldcup.client.SolutionByConstructionClient" -Dexec.args="4"
 
+or
+
+sh target/bin/simulation 4 1000
+sh target/bin/construction 4
+
 
 
 

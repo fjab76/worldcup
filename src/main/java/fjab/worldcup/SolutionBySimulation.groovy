@@ -4,10 +4,6 @@ import fjab.worldcup.api.GroupResult
 import fjab.worldcup.api.GroupResultCalculator
 import fjab.worldcup.util.SingleTeamResult;
 
-import org.paukov.combinatorics.Factory;
-import org.paukov.combinatorics.Generator;
-import org.paukov.combinatorics.ICombinatoricsVector;
-
 class SolutionBySimulation implements GroupResultCalculator {
 
 	//Setting default value: the higher the number of iterations, the more accurate the result
@@ -20,31 +16,12 @@ class SolutionBySimulation implements GroupResultCalculator {
 		Set<GroupResult> groupResults = []
 		
 		//Teams are represented by numbers: 0,1,2,3...
-		//List matches = calculateMatches(numTeams)
 		List rounds = calculateRounds(numTeams)
 		
 		(1..numIterations).each {playGroup rounds,groupResults,numTeams}
 
 		return groupResults
-	}
-	
-	private List calculateMatches(int numTeams){
-		
-		ICombinatoricsVector<Integer> originalVector = Factory.createVector(0..<numTeams)
-		Generator<Integer> generator = Factory.createSimpleCombinationGenerator(originalVector, 2 as Integer)
-		
-		generator.generateAllObjects().collect{it.getVector()}
-	}
-	
-	private List calculateRounds2(List matches, int numTeams){
-		
-		ICombinatoricsVector<Integer[]> originalVector = Factory.createVector(matches as Integer[][])
-		//We are assuming that the number of teams is even
-		Generator<Integer[]> generator = Factory.createSimpleCombinationGenerator(originalVector, numTeams/2 as Integer)
-		
-		List roundList = generator.generateAllObjects().collect{it.getVector()}
-		roundList.findAll {filterOutInvalidRound it}
-	}
+	}		
 	
 	/**
 	 * Calculate the matches to be played in each round.

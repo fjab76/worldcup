@@ -111,5 +111,10 @@ class IntegerMatrixTest  {
 		assert 0==element;
 	
 	}
+	
+	@Test
+	void combinations(){
+		println GroovyCollections.combinations(["a","b","c"],["1"])
+	}
 
 }

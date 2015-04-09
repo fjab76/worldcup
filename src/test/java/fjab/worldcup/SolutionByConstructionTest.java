@@ -364,4 +364,19 @@ public class SolutionByConstructionTest {
 		//then
 		Assert.assertArrayEquals(null, resultingArray);		
 	}
+	
+	private Integer[] gr1 = {1,null,null};
+	@Test
+	public void groupResult1_IsCompatible(){
+		
+		//given
+		Integer[] groupResult = gr1;
+		Integer[] singleTeamResult = {-1,-1,1};
+		
+		//when
+		Integer[] resultingArray = impl.checkCompatibility(groupResult, singleTeamResult);
+		
+		//then
+		Assert.assertArrayEquals(new Integer[]{1,-1,-1}, resultingArray);		
+	}
 }

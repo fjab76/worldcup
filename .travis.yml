@@ -8,3 +8,4 @@ deploy:
   app: damp-journey-1113
   on:
     repo: fjab76/worldcup
+  run: "sh target/bin/simulation 4 1000"

@@ -14,6 +14,9 @@ The method to calculate the number of groups is declared in the interface GroupR
 Finally, if you are curious about the number of result combinations that are possible for any given group, download the project and run it!!<br>
 There are 2 client classes with a main method, one for each algorithm: SolutionBySimulationClient and SolutionByConstructionClient.
 
+mvn exec:java -Dexec.mainClass="fjab.worldcup.client.SolutionBySimulationClient" -Dexec.args="4 10000"
+mvn exec:java -Dexec.mainClass="fjab.worldcup.client.SolutionByConstructionClient" -Dexec.args="4"
+
 
 
 

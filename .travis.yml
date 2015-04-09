@@ -1,4 +1,10 @@
 language: java
-
 jdk:
-  - oraclejdk8
+- oraclejdk8
+deploy:
+  provider: heroku
+  api_key:
+    secure: al6qQC5s+fuLbi4I7BokPp5WjV8a3quAopuIZ4VIFReuZLSvUUOr7IjIWtyl9FFsAAXsBOIAi/b9o/x2MqfmAbDP8T+A7wGbKvXuqdcv3bUWmfxRiP7P9ievch4IlvGDvOzieTDi7ocalkIb59UcYolK5RXOyZUK9CIy0ZGhdpk=
+  app: damp-journey-1113
+  on:
+    repo: fjab76/worldcup
